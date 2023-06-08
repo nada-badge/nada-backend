@@ -23,6 +23,8 @@ async function signUp(req, res, next) {
         const user = new User({ email, password });
         await user.save();
 
+        res.status(200).json({ message: '회원가입 성공' });
+
     } catch (err) {
         next(err);
     }
