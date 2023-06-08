@@ -55,7 +55,7 @@ async function login(req, res, next) {
         // 3. 토큰 발급
         const token = jwt.sign(
             { email: user.email },
-            JWT_SECRET,
+            config.JWT_SECRET,
             { expiresIn: '1h' }
         );
 
