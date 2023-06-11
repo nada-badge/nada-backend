@@ -2,10 +2,18 @@ const express = require('express');
 const router = require('./api/routes/router');
 const connectDB = require('./loader/db');
 const config = require('./config/config');
+const cors = require('cors');
+
+let corsOptions = {
+    origin: '*',
+    credentials: true,
+}
 
 connectDB();
 
 const app = express();
+
+app.use(cors(corsOptions));
 
 // JSON 파싱을 위한 미들웨어
 app.use(express.urlencoded({ extended: true }));
