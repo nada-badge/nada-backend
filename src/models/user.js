@@ -1,25 +1,78 @@
+const { contentType } = require('express/lib/response');
 const mongoose = require('mongoose')
 
+const ProfileSchema = new mongoose.Schema({
+    userName: {     // 닉네임
+        type: String,
+        required: true
+    },
+    phoneNumber: {
+        type: String,
+        required: true
+    },
+    introduce : {
+        type: String
+    },
+    sex: {
+        type: Number
+    },
+    company : {
+        type: String
+    },
+    school : {
+        type: String
+    },
+    birthday : {
+        type: Date
+    },
+    updatedAt: {
+        type: Date,
+        required: true,
+        default: Date.now
+    }
+})
+
 const UserSchema = new mongoose.Schema({
-    email: {
+    /*
+    did: {
         type: String,
         require: true,
         unique: true
     },
+    */
+    userType: {
+        type: Number,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
     password: { 
         type: String, 
-        require: true
+        required: true
     },
+    profile: {
+        type: ProfileSchema,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        required: true,
+        default: Date.now
+    },
+    updatedAt: {
+        type: Date,
+        required: true,
+        default: Date.now
+    }
+
     /*
-    did: String,
-    user_id: String,
-    role: Uint8Array,
     auth: {
         // 임베디드
     },
-    Profile: {
-        // 임베디드
-    },
+    
     badges: [{
         // 임베디드
     }],
@@ -32,11 +85,13 @@ const UserSchema = new mongoose.Schema({
     group_info: {
         // 임베디드
     },
-    joined_at: {
-        type: Date,
-        default: Date.now()
-    }
     */
 });
 
-module.exports = mongoose.model('User', UserSchema);
+const User = mongoose.model('User', UserSchema);
+const Profile = mongoose.model('Profile', ProfileSchema);
+
+module.exports = {
+    User,
+    Profile
+};
