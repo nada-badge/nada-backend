@@ -73,7 +73,7 @@ async function checkUserName(req, res, next) {
         const user = await User.findOne({ 'profile.userName': userName } );
 
         if (user) {
-            return res.status(401).json({ result: 0, message: '이미 사용 중인 이름입니다.' });
+            return res.status(409).json({ result: 0, message: '이미 사용 중인 이름입니다.' });
         }
 
         res.status(200).json({ result: 1 });
