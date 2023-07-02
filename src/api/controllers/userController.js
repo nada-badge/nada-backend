@@ -69,9 +69,11 @@ async function login(req, res, next) {
 
 async function checkUserName(req, res, next) {
     try {
-        const { userName } = req.body;
+        const userName = req.query.userName; // URL에서 추출한 변수 값
+
         const user = await User.findOne({ 'profile.userName': userName } );
 
+        
         if (user) {
             return res.status(409).json({ result: 0, message: '이미 사용 중인 이름입니다.' });
         }
