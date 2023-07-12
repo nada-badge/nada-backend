@@ -1,8 +1,9 @@
 const { Schedule } = require('../../models/schedule');
+const { toKST, setFunc } = require('../../common/utils/converter');
 
 async function addSchedule(req, res, next) {
     try {
-        const { scheduleName, groupId, field, category, area, content, startedAt, endedAt } = req.body;
+        const { scheduleName, groupId, groupName, field, category, area, content, startedAt, endedAt } = req.body;
         
         const start = new Date(startedAt);
         const end = new Date(endedAt);
@@ -19,6 +20,7 @@ async function addSchedule(req, res, next) {
         const schedule = new Schedule({
             scheduleName: scheduleName,
             groupId: groupId,
+            groupName: groupName,
             field: field,
             category: category,
             area: area,
@@ -36,6 +38,47 @@ async function addSchedule(req, res, next) {
     }
 };
 
+async function getSchedule(req, res, next) {
+    try {
+        const groupName = req.query.groupName;
+        const scheduleName = req.query.scheduleName;
+        
+        const searched = await Schedule.findOne({ groupName: groupName, scheduleName: scheduleName });
+
+        if(!searched){
+            res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
+        }
+
+        const schedule = setFunc(searched, ['registeredAt', 'updatedAt', 'startedAt', 'endedAt'], toKST);
+
+        res.status(200).json({ schedule });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
+async function listSchedule(req, res, next) {
+    try {
+        const groupName  = req.query.groupName;
+        
+        const searched = await Schedule.find({ groupName });
+
+        if(!searched){
+            res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
+        }
+        
+        const schedules = setFunc(searched, ['registeredAt', 'updatedAt', 'startedAt', 'endedAt'], toKST);
+        
+        res.status(200).json({ schedules });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
-    addSchedule
+    addSchedule,
+    getSchedule,
+    listSchedule
 };
