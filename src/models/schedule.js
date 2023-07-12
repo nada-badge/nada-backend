@@ -8,6 +8,10 @@ const ScheduleSchema = new mongoose.Schema({
     groupId: {
         type: String,
     },
+    groupName: {
+        type: String,
+        required: true
+    },
     field: {
         type: String,
         required: true
