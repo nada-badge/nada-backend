@@ -72,7 +72,6 @@ async function checkUserName(req, res, next) {
         const userName = req.query.userName; // URL에서 추출한 변수 값
 
         const user = await User.findOne({ 'profile.userName': userName } );
-
         
         if (user) {
             return res.status(409).json({ result: 0, message: '이미 사용 중인 이름입니다.' });
@@ -85,8 +84,26 @@ async function checkUserName(req, res, next) {
     }
 }
 
+async function checkEmailOverlap(req, res, next) {
+    try {
+        const email = req.query.email; // URL에서 추출한 변수 값
+
+        const emailOverlap = await User.findOne({ 'email': email } );
+        
+        if (emailOverlap) {
+            return res.status(409).json({ result: 0, message: '이미 사용 중인 이메일입니다.' });
+        }
+
+        res.status(200).json({ result: 1 });
+
+    } catch (err) {
+        next(err);
+    }
+}
+
 module.exports = {
     signUp,
     login,
-    checkUserName
+    checkUserName,
+    checkEmailOverlap
 }
