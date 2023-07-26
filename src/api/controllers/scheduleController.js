@@ -72,10 +72,16 @@ async function getSchedule(req, res, next) {
 async function listSchedule(req, res, next) {
     try {
         const groupName  = req.query.groupName;
+        let searched;
         
-        const searched = await Schedule.find({ groupName });
-
-        if(!searched || searched.length == 0){
+        if(groupName == null) {
+            searched = await Schedule.find();
+        }
+        else {
+            searched = await Schedule.find({ groupName });
+        }
+        console.log(groupName);
+        if(!searched || searched.length == 0) {
             return res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
         }
         
