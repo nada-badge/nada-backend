@@ -17,6 +17,17 @@ async function addSchedule(req, res, next) {
             return res.status(400).json({ message: '이미 종료된 활동입니다.' });
         }
 
+        const check = await Schedule.findOne({ 
+            scheduleName: scheduleName,
+            groupName: groupName,
+            startedAt: startedAt,
+            endedAt: endedAt
+        });
+
+        if(check) {
+            return res.status(400).json({ message: '이미 등록된 활동입니다.' });
+        }
+
         const schedule = new Schedule({
             scheduleName: scheduleName,
             groupId: groupId,
@@ -45,8 +56,8 @@ async function getSchedule(req, res, next) {
         
         const searched = await Schedule.findOne({ groupName: groupName, scheduleName: scheduleName });
 
-        if(!searched){
-            res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
+        if(!searched){ 
+            return res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
         }
 
         const schedule = setFunc(searched, ['registeredAt', 'updatedAt', 'startedAt', 'endedAt'], toKST);
@@ -61,11 +72,17 @@ async function getSchedule(req, res, next) {
 async function listSchedule(req, res, next) {
     try {
         const groupName  = req.query.groupName;
+        let searched;
         
-        const searched = await Schedule.find({ groupName });
-
-        if(!searched){
-            res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
+        if(groupName == null) {
+            searched = await Schedule.find();
+        }
+        else {
+            searched = await Schedule.find({ groupName });
+        }
+        console.log(groupName);
+        if(!searched || searched.length == 0) {
+            return res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
         }
         
         const schedules = setFunc(searched, ['registeredAt', 'updatedAt', 'startedAt', 'endedAt'], toKST);
