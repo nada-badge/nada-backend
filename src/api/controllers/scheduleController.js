@@ -94,8 +94,61 @@ async function listSchedule(req, res, next) {
     }
 };
 
+async function updateSchedule(req, res, next) {
+    try {
+        const toUpdate = req.body;
+        const id = toUpdate._id;
+
+        if(id == null) {
+            return res.status(400).json({ message: 'id 값이 null입니다.' });
+        }
+
+        let schedule = await Schedule.findById(id);
+    
+        if(!schedule || schedule.length == 0) {
+            return res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
+        }
+
+        Object.assign(schedule, toUpdate);
+
+        await schedule.save();
+        
+        res.status(200).json({ schedule });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
+async function deleteSchedule(req, res, next) {
+    try {
+        const toDelete = req.body;
+        const id = toDelete._id;
+
+        if(id == null) {
+            return res.status(400).json({ message: 'id 값이 null입니다.' });
+        }
+
+        let schedule = await Schedule.findById(id);
+    
+        if(!schedule || schedule.length == 0) {
+            return res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
+        }
+
+        await schedule.deleteOne();
+        
+        res.status(200).json({ schedule });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
+
 module.exports = {
     addSchedule,
     getSchedule,
-    listSchedule
+    listSchedule,
+    updateSchedule,
+    deleteSchedule
 };
