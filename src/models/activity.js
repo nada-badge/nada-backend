@@ -1,12 +1,9 @@
 const mongoose = require('mongoose')
 
-const ScheduleSchema = new mongoose.Schema({
-    scheduleName: {
+const ActivitySchema = new mongoose.Schema({
+    activityName: {
         type: String,
         required: true
-    },
-    groupId: {
-        type: String,
     },
     groupName: {
         type: String,
@@ -47,8 +44,8 @@ const ScheduleSchema = new mongoose.Schema({
     }
 });
 
-const Schedule = mongoose.model('Schedule', ScheduleSchema);
+const Activity = mongoose.model('Activity', ActivitySchema);
 
 module.exports = {
-    Schedule
+    Activity
 };
