@@ -1,9 +1,9 @@
-const { Schedule } = require('../../models/schedule');
+const { Activity } = require('../../models/activity');
 const { toKST, setFunc } = require('../../common/utils/converter');
 
-async function addSchedule(req, res, next) {
+async function addActivity(req, res, next) {
     try {
-        const { scheduleName, groupId, groupName, field, category, area, content, startedAt, endedAt } = req.body;
+        const { activityName, groupName, field, category, area, content, startedAt, endedAt } = req.body;
         
         const start = new Date(startedAt);
         const end = new Date(endedAt);
@@ -17,8 +17,8 @@ async function addSchedule(req, res, next) {
             return res.status(400).json({ message: '이미 종료된 활동입니다.' });
         }
 
-        const check = await Schedule.findOne({ 
-            scheduleName: scheduleName,
+        const check = await Activity.findOne({ 
+            activityName: activityName,
             groupName: groupName,
             startedAt: startedAt,
             endedAt: endedAt
@@ -28,9 +28,8 @@ async function addSchedule(req, res, next) {
             return res.status(400).json({ message: '이미 등록된 활동입니다.' });
         }
 
-        const schedule = new Schedule({
-            scheduleName: scheduleName,
-            groupId: groupId,
+        const activity = new Activity({
+            activityName: activityName,
             groupName: groupName,
             field: field,
             category: category,
@@ -40,7 +39,7 @@ async function addSchedule(req, res, next) {
             endedAt: endedAt
         });
 
-        await schedule.save();
+        await activity.save();
 
         res.status(200).json({ message: '대외활동 입력 성공' });
     }
@@ -49,55 +48,55 @@ async function addSchedule(req, res, next) {
     }
 };
 
-async function getSchedule(req, res, next) {
+async function getActivity(req, res, next) {
     try {
         const id = req.query._id;
-
+    
         if(id == null) {
             return res.status(400).json({ message: 'id 값이 null입니다.' });
         }
         
-        const searched = await Schedule.findById(id);
+        const searched = await Activity.findById(id);
 
         if(!searched){ 
             return res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
         }
 
-        const schedule = setFunc(searched, ['registeredAt', 'updatedAt', 'startedAt', 'endedAt'], toKST);
+        const activity = setFunc(searched, ['registeredAt', 'updatedAt', 'startedAt', 'endedAt'], toKST);
 
-        res.status(200).json({ schedule });
+        res.status(200).json({ activity });
     }
     catch (err) {
         next(err);
     }
 };
 
-async function listSchedule(req, res, next) {
+async function listActivity(req, res, next) {
     try {
-        const groupName  = req.query.groupName;
+        const groupName = req.query.groupName;
         let searched;
         
         if(groupName == null) {
-            searched = await Schedule.find();
+            searched = await Activity.find();
         }
         else {
-            searched = await Schedule.find({ groupName });
+            searched = await Activity.find({ groupName });
         }
        
         if(!searched || searched.length == 0) {
             return res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
         }
         
-        const schedules = setFunc(searched, ['registeredAt', 'updatedAt', 'startedAt', 'endedAt'], toKST);
+        const activities = setFunc(searched, ['registeredAt', 'updatedAt', 'startedAt', 'endedAt'], toKST);
         
-        res.status(200).json({ schedules });
+        res.status(200).json({ activities });
     }
     catch (err) {
         next(err);
     }
 };
 
-async function updateSchedule(req, res, next) {
+async function updateActivity(req, res, next) {
     try {
         const toUpdate = req.body;
         const id = toUpdate._id;
@@ -106,24 +105,24 @@ async function updateSchedule(req, res, next) {
             return res.status(400).json({ message: 'id 값이 null입니다.' });
         }
 
-        let schedule = await Schedule.findById(id);
+        let activity = await Activity.findById(id);
     
-        if(!schedule || schedule.length == 0) {
+        if(!activity || activity.length == 0) {
             return res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
         }
 
-        Object.assign(schedule, toUpdate);
+        Object.assign(activity, toUpdate);
 
-        await schedule.save();
+        await activity.save();
         
-        res.status(200).json({ schedule });
+        res.status(200).json({ activity });
     }
     catch (err) {
         next(err);
     }
 };
 
-async function deleteSchedule(req, res, next) {
+async function deleteActivity(req, res, next) {
     try {
         const toDelete = req.body;
         const id = toDelete._id;
@@ -132,15 +131,15 @@ async function deleteSchedule(req, res, next) {
             return res.status(400).json({ message: 'id 값이 null입니다.' });
         }
 
-        let schedule = await Schedule.findById(id);
+        let activity = await Activity.findById(id);
     
-        if(!schedule || schedule.length == 0) {
+        if(!activity || activity.length == 0) {
             return res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
         }
 
-        await schedule.deleteOne();
+        await activity.deleteOne();
         
-        res.status(200).json({ schedule });
+        res.status(200).json({ activity });
     }
     catch (err) {
         next(err);
@@ -149,9 +148,9 @@ async function deleteSchedule(req, res, next) {
 
 
 module.exports = {
-    addSchedule,
-    getSchedule,
-    listSchedule,
-    updateSchedule,
-    deleteSchedule
+    addActivity,
+    getActivity,
+    listActivity,
+    updateActivity,
+    deleteActivity
 };
