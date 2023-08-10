@@ -51,10 +51,13 @@ async function addSchedule(req, res, next) {
 
 async function getSchedule(req, res, next) {
     try {
-        const groupName = req.query.groupName;
-        const scheduleName = req.query.scheduleName;
+        const id = req.query._id;
+
+        if(id == null) {
+            return res.status(400).json({ message: 'id 값이 null입니다.' });
+        }
         
-        const searched = await Schedule.findOne({ groupName: groupName, scheduleName: scheduleName });
+        const searched = await Schedule.findById(id);
 
         if(!searched){ 
             return res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
@@ -80,7 +83,7 @@ async function listSchedule(req, res, next) {
         else {
             searched = await Schedule.find({ groupName });
         }
-        console.log(groupName);
+       
         if(!searched || searched.length == 0) {
             return res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
         }
