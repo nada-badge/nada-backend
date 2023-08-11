@@ -110,6 +110,8 @@ async function updateActivity(req, res, next) {
         if(!activity || activity.length == 0) {
             return res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
         }
+        
+        toUpdate.updatedAt = new Date();
 
         Object.assign(activity, toUpdate);
 
