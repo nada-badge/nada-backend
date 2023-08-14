@@ -3,8 +3,7 @@ const mongoose = require('mongoose')
 
 const ProfileSchema = new mongoose.Schema({
     userName: {     // 닉네임
-        type: String,
-        required: true
+        type: String
     },
     phoneNumber: {
         type: String,
@@ -32,6 +31,68 @@ const ProfileSchema = new mongoose.Schema({
     }
 })
 
+const MemberSchema = new mongoose.Schema({
+    userName: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String
+    },
+    role: {
+        type: String,
+        required: true
+    },
+    status: {
+        type: Number,
+        required: true
+    },
+    startedAt: {
+        type: Date,
+        required: true
+    },
+    endedAt: {
+        type: Date
+    },
+    updatedAt: {
+        type: Date,
+        required: true,
+        default: Date.now
+    }
+});
+
+const GroupSchema = new mongoose.Schema({
+    groupName: {
+        type: String,
+        required: true
+    },
+    represent: {
+        type: String,
+        required: true
+    },
+    category: {
+        type: Number,
+        required: true
+    },
+    role: {
+        type: String
+    },
+    members: {
+        type: MemberSchema
+    },
+    startedAt: {
+        type: Date
+    },
+    endedAt: {
+        type: Date
+    },
+    updatedAt: {
+        type: Date,
+        required: true,
+        default: Date.now
+    }
+});
+
 const UserSchema = new mongoose.Schema({
     /*
     did: {
@@ -57,6 +118,9 @@ const UserSchema = new mongoose.Schema({
         type: ProfileSchema,
         required: true
     },
+    groups: [{
+        type: GroupSchema
+    }],
     createdAt: {
         type: Date,
         required: true,
@@ -90,8 +154,11 @@ const UserSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', UserSchema);
 const Profile = mongoose.model('Profile', ProfileSchema);
+const Group = mongoose.model('Group', GroupSchema);
+const Member = mongoose.model('Member', MemberSchema);
 
 module.exports = {
     User,
-    Profile
+    Profile,
+    Group
 };

@@ -1,12 +1,12 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const config = require('../../config/config')
-const { User, Profile } = require('../../models/user')
+const { User, Profile, Group } = require('../../models/user')
 const { validationResult } = require('express-validator');
 
 async function signUp(req, res, next) {
      try {
-        const { email, password, userType, userName, phoneNumber } = req.body;
+        const reqUser = req.body;
 
         const err = validationResult(req.body);
         if(!err.isEmpty()){
@@ -14,19 +14,30 @@ async function signUp(req, res, next) {
         }
         
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
+        const hashedPassword = await bcrypt.hash(reqUser.password, salt);
+   
         const profile = new Profile({
-            userName: userName,
-            phoneNumber: phoneNumber
+            phoneNumber: reqUser.phoneNumber
         });
 
         const user = new User({ 
-            email: email,
+            email: reqUser.email,
             password: hashedPassword,
-            userType: userType,
+            userType: reqUser.userType,
             profile: profile
         });
+
+        if(reqUser.userType == 2) {
+            const group = new Group({
+                groupName: reqUser.groupName,
+                category: reqUser.category,
+                represent: reqUser.represent
+            });
+            user.groups = group;
+        }
+        else if(reqUser.userType == 1) {
+            user.profile.userName = reqUser.userName;
+        }
 
         await user.save();
 

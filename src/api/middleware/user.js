@@ -9,7 +9,7 @@ const validateSignUp = [
     check('password').matches(/^(?=.*\d)/).withMessage('Password must include one number'),
     check('password').matches(/^(?=.*[!@#$%^&*])/).withMessage('Password must include one special character'),
     check('userType').notEmpty().withMessage('userType is required'),
-    check('userName').notEmpty().withMessage('userName is required'),
+//    check('userName').notEmpty().withMessage('userName is required'),
     check('phoneNumber').notEmpty().withMessage('phoneNumber is required'),
 ];
 
