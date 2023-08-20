@@ -13,5 +13,6 @@ router.use('/login', [checker.validateLogin, validator.validateRequest], userCon
 // 중복체크
 router.get('/userName', userController.checkUserName);
 router.get('/email', userController.checkEmailOverlap);
+router.post('/groupUser', userController.checkGroupUser)
 
 module.exports = router;
