@@ -112,9 +112,27 @@ async function checkEmailOverlap(req, res, next) {
     }
 }
 
+async function checkGroupUser(req, res, next) {
+    try {
+        const { groupName, phoneNumber } = req.body;
+
+        const groupUser = await User.findOne({ 'groups.groupName': groupName, 'profile.phoneNumber': phoneNumber } );
+        
+        if (groupUser) {
+            return res.status(200).json({ result: 0, message: '이미 가입한 단체 회원입니다.' });
+        }
+
+        res.status(200).json({ result: 1 });
+
+    } catch (err) {
+        next(err);
+    }
+}
+
 module.exports = {
     signUp,
     login,
     checkUserName,
-    checkEmailOverlap
+    checkEmailOverlap,
+    checkGroupUser
 }
