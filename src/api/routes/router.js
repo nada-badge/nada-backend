@@ -1,7 +1,7 @@
 const express = require('express');
 const userRouter = require('./userRouter');
 const activityRouter = require('./activityRouter');
-const communityRouter = require('./community/router')
+const communityRouter = require('./community/communityRouter')
 
 const router = express.Router();
 
