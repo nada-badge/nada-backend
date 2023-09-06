@@ -48,6 +48,29 @@ async function addPost(req, res, next) {
     }
 };
 
+async function getPost(req, res, next) {
+    try {
+        const id = req.query._id;
+    
+        if(id == null) {
+            return res.status(400).json({ message: 'id 값이 null입니다.' });
+        }
+        
+        const searched = await Post.findById(id);
+
+        if(!searched){ 
+            return res.status(404).json({ massege: '해당 게시물을 찾을 수 없습니다.' })
+        }
+
+        const post = setFunc(searched, ['registeredAt', 'updatedAt'], toKST);
+
+        res.status(200).json({ post });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
 async function listPost(req, res, next) {
     try {
 
@@ -131,9 +154,7 @@ async function deletePost(req, res, next) {
 
 module.exports = {
     addPost,
-    /*  
     getPost,
-    */
     listPost,
     updatePost,
     deletePost
