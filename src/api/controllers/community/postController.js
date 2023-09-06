@@ -1,5 +1,6 @@
 const { Post } = require('../../../models/community');
 const { User } = require('../../../models/user');
+const { toKST, setFunc } = require('../../../common/utils/converter');
 const COMMUNITY = require('../../../common/const/community');
 
 async function addPost(req, res, next) {
@@ -41,6 +42,34 @@ async function addPost(req, res, next) {
         await post.save();
 
         res.status(200).json({ message: '게시물 등록 성공' });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
+async function listPost(req, res, next) {
+    try {
+
+        const { category, field, area } = req.query;
+   
+        if(!COMMUNITY.category.includes(category)) {
+            return res.status(401).json({ message: '카테고리 설정이 잘못되었습니다.' });
+        }
+
+        let query = { category };
+
+        if(["모집", "홍보"].includes(category)) {
+            if (field) { query.field = field; }
+            if (area) { query.area = area; }
+        }
+        
+        searched = await Post.find(query);
+
+        // 아래 코드 작동 안 되고 있음
+        const posts = setFunc(searched, ['registeredAt', 'updatedAt'], toKST);
+        
+        res.status(200).json({ posts });
     }
     catch (err) {
         next(err);
@@ -104,8 +133,8 @@ module.exports = {
     addPost,
     /*  
     getPost,
-    listPost,
     */
+    listPost,
     updatePost,
     deletePost
 };
