@@ -73,7 +73,6 @@ async function getPost(req, res, next) {
 
 async function listPost(req, res, next) {
     try {
-
         const { category, field, area } = req.query;
    
         if(!COMMUNITY.category.includes(category)) {
@@ -151,11 +150,48 @@ async function deletePost(req, res, next) {
     }
 };
 
+async function searchPost(req, res, next) {
+    try {
+        const { category, searchBy, searchWord } = req.query;
+   
+        if(!COMMUNITY.category.includes(category)) {
+            return res.status(401).json({ message: '카테고리 설정이 잘못되었습니다.' });
+        }
+
+        let query = { category: category };
+        
+        if (searchBy === 'title') {
+            query.title = new RegExp(searchWord, 'i');
+        } else if (searchBy === 'userName') {
+            query.userName = new RegExp(searchWord, 'i');
+        } else if (searchBy === 'content') {
+            query.content = new RegExp(searchWord, 'i');
+        } else {
+            return res.status(400).json({ message: '유효하지 않은 카테고리입니다.(제목, 작성자, 본문 중에 선택)' });
+        }
+
+        const searched = await Post.find(query);
+    
+        if(!searched){ 
+            return res.status(404).json({ massege: '검색 결과가 없습니다.' })
+        }
+        
+        // 아래 코드 작동 안 되고 있음
+        const posts = setFunc(searched, ['registeredAt', 'updatedAt'], toKST);
+
+        res.status(200).json({ posts });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
 
 module.exports = {
     addPost,
     getPost,
     listPost,
     updatePost,
-    deletePost
+    deletePost,
+    searchPost
 };
