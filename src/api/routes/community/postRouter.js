@@ -8,5 +8,6 @@ router.get('', postController.getPost);
 router.get('/list', postController.listPost);
 router.patch('', postController.updatePost);
 router.delete('', postController.deletePost);
+router.get('/search', postController.searchPost);
 
 module.exports = router;
