@@ -56,13 +56,17 @@ async function getPost(req, res, next) {
             return res.status(400).json({ message: 'id 값이 null입니다.' });
         }
         
-        const searched = await Post.findById(id);
+        const searched = await Post.findOneAndUpdate(
+            { _id: id },
+            { $inc: { views: 1 } },
+            { new: true }
+        );
 
         if(!searched){ 
             return res.status(404).json({ massege: '해당 게시물을 찾을 수 없습니다.' })
         }
 
-        const post = setFunc(searched, ['registeredAt', 'updatedAt'], toKST);
+        let post = setFunc(searched, ['registeredAt', 'updatedAt'], toKST);
 
         res.status(200).json({ post });
     }
