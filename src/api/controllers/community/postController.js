@@ -17,11 +17,11 @@ async function addPost(req, res, next) {
             return res.status(401).json({ message: '카테고리 설정이 잘못되었습니다.' });
         }
 
-        if(!COMMUNITY.field.includes(field) || (field.includes("전체") && COMMUNITY.field.includes(field))) {
+        if(field !== "전체" && !COMMUNITY.field.includes(field)) {
             return res.status(401).json({ message: '유효하지 않은 분야입니다.' });
         }
 
-        if(!COMMUNITY.area.includes(area) || (area.includes("전국") && COMMUNITY.area.includes(area))) {
+        if(area != "전국" && COMMUNITY.area.includes(area)) {
             return res.status(401).json({ message: '장소 설정이 잘못되었습니다.' });
         }
 
