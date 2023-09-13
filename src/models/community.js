@@ -85,6 +85,10 @@ const PostSchema = new mongoose.Schema({
     comments: [{
         type: CommentSchema
     }],
+    views: {
+        type: Number,
+        default: 0
+    },
     registeredAt: {
         type: Date,
         required: true,
