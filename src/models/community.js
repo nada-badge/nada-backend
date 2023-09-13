@@ -62,6 +62,10 @@ const PostSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    mainCategory: {
+        type: String,
+        required: true
+    },
     category: {
         type: String,
         required: true
