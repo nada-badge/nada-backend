@@ -5,7 +5,7 @@ const COMMUNITY = require('../../../common/const/community');
 
 async function addPost(req, res, next) {
     try {
-        const { userEmail, userName, category, field, area, title, content } = req.body;
+        const { userEmail, userName, mainCategory, category, field, area, title, content } = req.body;
         
         const isExist = await User.findOne({ 'email': userEmail, 'profile.userName': userName });
 
@@ -13,25 +13,33 @@ async function addPost(req, res, next) {
             return res.status(401).json({ message: '사용자 확인이 불가능합니다.' });
         } 
 
-        if(!COMMUNITY.category.includes(category)) {
-            return res.status(401).json({ message: '카테고리 설정이 잘못되었습니다.' });
+        if(!COMMUNITY.category.includes(mainCategory)) {
+            return res.status(401).json({ message: '메인 카테고리 설정이 잘못되었습니다.' });
         }
 
         if(field !== "전체" && !COMMUNITY.field.includes(field)) {
             return res.status(401).json({ message: '유효하지 않은 분야입니다.' });
         }
 
-        if(area != "전국" && COMMUNITY.area.includes(area)) {
+        if(area !== "전국" && !COMMUNITY.area.includes(area)) {
             return res.status(401).json({ message: '장소 설정이 잘못되었습니다.' });
         }
 
-        /* ----------------------------------
-            모집, 홍보 시 각 분류 설정 검증
-        ----------------------------------- */
+        if(mainCategory !== "모집") {
+            if(!COMMUNITY.inRecruitment.includes(category)) {
+                return res.status(401).json({ message: '하위 카테고리 설정이 잘못되었습니다.' });
+            }
+        }
+        else if(mainCategory !== "홍보") {
+            if(!COMMUNITY.inPromotion.includes(category)) {
+                return res.status(401).json({ message: '하위 카테고리 설정이 잘못되었습니다.' });
+            }
+        }
 
         const post = new Post({
             userEmail: userEmail,
             userName: userName,
+            mainCategory: mainCategory,
             category: category,
             field: field,
             area: area,
