@@ -41,6 +41,10 @@ const CommentSchema = new mongoose.Schema({
     replies: [{
         type: ReplySchema
     }],
+    isEdited: {
+        type: Boolean,
+        default: false
+    },
     registeredAt: {
         type: Date,
         required: true,
