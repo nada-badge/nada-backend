@@ -6,7 +6,8 @@ const router = express.Router();
 router.post('/:post_id', commentController.addComment);
 /*
 router.get('', commentController.getComment);
-router.patch('', commentController.updCommentost);
-router.delete('', commentController.deleteComment);
 */
+router.patch('/:post_id', commentController.updateComment);
+router.delete('/:post_id', commentController.deleteComment);
+
 module.exports = router;
