@@ -1,4 +1,3 @@
-const { contentType } = require('express/lib/response');
 const mongoose = require('mongoose')
 
 const ProfileSchema = new mongoose.Schema({
@@ -130,13 +129,14 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         required: true,
         default: Date.now
-    }
-
+    },
+    calendar: {
+        type: mongoose.Schema.ObjectId, ref: 'Calendar',
+    },  
     /*
     auth: {
         // 임베디드
     },
-    
     badges: [{
         // 임베디드
     }],
