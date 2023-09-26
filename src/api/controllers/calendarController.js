@@ -23,7 +23,7 @@ async function addBookmark(req, res, next) {
         if(!calendar_id){
             const calendar = new Calendar({
                 calendarCategory: user.userType,
-                activitys: [activity_id]
+                activities: [activity_id]
             });
             await calendar.save();
 
@@ -36,7 +36,11 @@ async function addBookmark(req, res, next) {
                 return res.status(404).json({ message: '사용자의 캘린더를 찾을 수 없습니다.' });
             }
 
-            calendar.activitys.push(activity_id);
+            if (calendar.activities.includes(activity_id)) {
+                return res.status(400).json({ message: '이미 해당 활동이 캘린더에 추가되어 있습니다.' });
+            }
+
+            calendar.activities.push(activity_id);
             await calendar.save();
         }
 
@@ -67,7 +71,7 @@ async function listBookmark(req, res, next) {
             return res.status(404).json({ message: '사용자의 캘린더를 찾을 수 없습니다.' });
         }
 
-        const activityPromises = calendar.activitys.map(async activityId => {
+        const activityPromises = calendar.activities.map(async activityId => {
             const activity = await Activity.findById(activityId);
             return activity;
           });

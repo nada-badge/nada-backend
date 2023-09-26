@@ -53,7 +53,7 @@ const CalendarSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    activitys: [{
+    activities: [{
         type: mongoose.Schema.ObjectId, ref: 'Activity'
     }],
     schedules: [{
