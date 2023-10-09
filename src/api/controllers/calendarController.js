@@ -131,16 +131,16 @@ async function removeBookmark(req, res, next) {
             return res.status(404).json({ message: '사용자의 캘린더를 찾을 수 없습니다.' });
         }
 
-        const activityPromises = calendar.activities.map(async activityId => {
-            const activity = await Activity.findById(activityId);
-            return activity;
-          });
-          
-        const activitiesUTC = await Promise.all(activityPromises);
+        const bookmarkToRemove = calendar.activities.find(activity => activity.toString() === bookmark_id);
 
-        const activities = setFunc(activitiesUTC, ['registeredAt', 'updatedAt', 'startedAt', 'endedAt'], toKST);
-        
-        res.status(200).json({ activities });
+        if (!bookmarkToRemove) {
+            return res.status(404).json({ message: '해당 활동을 찾을 수 없습니다.' });
+        } else {
+            calendar.activities = calendar.activities.filter(activity => activity.toString() !== bookmark_id);
+            await calendar.save();
+        }
+
+        res.status(200).json({ message: '관심활동이 해제되었습니다.' });
     }
     catch (err) {
         next(err);
