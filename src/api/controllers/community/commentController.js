@@ -96,7 +96,11 @@ async function deleteComment(req, res, next) {
             return res.status(404).json({ message: '해당 댓글을 찾을 수 없습니다.' });
         }
 
-        postToUpdate.comments = postToUpdate.comments.filter(comment => comment._id != comment_id);
+        if(commentToDelete.isDeleted){
+            return res.status(400).json({ message: '이미 삭제된 댓글입니다.' });
+        }
+
+        commentToDelete.isDeleted = true;
 
         await postToUpdate.save();
   
