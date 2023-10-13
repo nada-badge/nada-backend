@@ -164,13 +164,13 @@ async function deletePost(req, res, next) {
 
 async function searchPost(req, res, next) {
     try {
-        const { category, searchBy, searchWord } = req.query;
+        const { mainCategory, searchBy, searchWord } = req.query;
    
-        if(!COMMUNITY.category.includes(category)) {
+        if(!COMMUNITY.category.includes(mainCategory)) {
             return res.status(401).json({ message: '카테고리 설정이 잘못되었습니다.' });
         }
 
-        let query = { category: category };
+        let query = { mainCategory: mainCategory };
         
         if (searchBy === 'title') {
             query.title = new RegExp(searchWord, 'i');
