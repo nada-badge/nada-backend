@@ -25,13 +25,13 @@ async function addPost(req, res, next) {
             return res.status(401).json({ message: '장소 설정이 잘못되었습니다.' });
         }
 
-        if(mainCategory !== "모집") {
-            if(!COMMUNITY.inRecruitment.includes(category)) {
+        if(mainCategory === "모집") {
+            if(category !== "전체" && !COMMUNITY.inRecruitment.includes(category)) {
                 return res.status(401).json({ message: '하위 카테고리 설정이 잘못되었습니다.' });
             }
         }
-        else if(mainCategory !== "홍보") {
-            if(!COMMUNITY.inPromotion.includes(category)) {
+        else if(mainCategory === "홍보") {
+            if(category !== "전체" && !COMMUNITY.inPromotion.includes(category)) {
                 return res.status(401).json({ message: '하위 카테고리 설정이 잘못되었습니다.' });
             }
         }
