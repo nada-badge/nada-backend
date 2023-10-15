@@ -13,6 +13,10 @@ const ReplySchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    isEdited: {
+        type: Boolean,
+        default: false
+    },   
     registeredAt: {
         type: Date,
         required: true,

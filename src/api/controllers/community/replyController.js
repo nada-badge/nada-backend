@@ -21,7 +21,7 @@ async function addReply(req, res, next) {
 
         const comment = post.comments.id(comment_id);
 
-        if (!comment) {
+        if(!comment) {
             return res.status(401).json({ message: '해당 댓글을 찾을 수 없습니다.' });
         }
 
@@ -44,14 +44,18 @@ async function addReply(req, res, next) {
 
 async function updateReply(req, res, next) {
     try {
-        const Reply_id = req.body.Reply_id;
+        const reply_id = req.body.reply_id;
         const post_id = req.params.post_id;
+        const comment_id = req.params.comment_id;
 
-        if(post_id == null) {
+        if(!post_id) {
             return res.status(400).json({ message: 'post_id 값이 null입니다.' });
         }
-        if(Reply_id == null) {
-            return res.status(400).json({ message: 'Reply_id 값이 null입니다.' });
+        if(!comment_id) {
+            return res.status(400).json({ message: 'comment_id 값이 null입니다.' });
+        }
+        if(!reply_id) {
+            return res.status(400).json({ message: 'reply_id 값이 null입니다.' });
         }
 
         let postToUpdate = await Post.findById(post_id);
@@ -60,19 +64,25 @@ async function updateReply(req, res, next) {
             return res.status(404).json({ massege: '해당 게시물을 찾을 수 없습니다.' })
         }
 
-        let ReplyToUpdate = postToUpdate.Replys.find(Reply => Reply._id == Reply_id);
-        
-        if (!ReplyToUpdate || ReplyToUpdate.length == 0) {
+        let commentToUpdate = postToUpdate.comments.id(comment_id);
+
+        if (!commentToUpdate || commentToUpdate.length == 0) {
             return res.status(404).json({ message: '해당 댓글을 찾을 수 없습니다.' });
         }
 
-        ReplyToUpdate.content = req.body.content;
-        ReplyToUpdate.isEdited = true;
-        ReplyToUpdate.updatedAt = new Date();
+        let replyToUpdate = commentToUpdate.replies.id(reply_id);
+
+        if (!replyToUpdate || replyToUpdate.length == 0) {
+            return res.status(404).json({ message: '해당 답글을 찾을 수 없습니다.' });
+        }
+
+        replyToUpdate.content = req.body.content;
+        replyToUpdate.isEdited = true;
+        replyToUpdate.updatedAt = new Date();
  
         await postToUpdate.save();
 
-        res.status(200).json({ ReplyToUpdate });
+        res.status(200).json({ replyToUpdate });
     }
     catch (err) {
         next(err);
@@ -81,14 +91,18 @@ async function updateReply(req, res, next) {
 
 async function deleteReply(req, res, next) {
     try {
-        const Reply_id = req.body.Reply_id;
+        const reply_id = req.body.reply_id;
         const post_id = req.params.post_id;
+        const comment_id = req.params.comment_id;
 
         if(post_id == null) {
             return res.status(400).json({ message: 'post_id 값이 null입니다.' });
         }
-        if(Reply_id == null) {
-            return res.status(400).json({ message: 'Reply_id 값이 null입니다.' });
+        if(!comment_id) {
+            return res.status(400).json({ message: 'comment_id 값이 null입니다.' });
+        }
+        if(!reply_id) {
+            return res.status(400).json({ message: 'reply_id 값이 null입니다.' });
         }
 
         let postToUpdate = await Post.findById(post_id);
@@ -97,17 +111,23 @@ async function deleteReply(req, res, next) {
             return res.status(404).json({ massege: '해당 게시물을 찾을 수 없습니다.' })
         }
 
-        let ReplyToDelete = postToUpdate.Replys.find(Reply => Reply._id == Reply_id);
-        
-        if (!ReplyToDelete || ReplyToDelete.length == 0) {
+        let commentToUpdate = postToUpdate.comments.id(comment_id);
+
+        if (!commentToUpdate || commentToUpdate.length == 0) {
             return res.status(404).json({ message: '해당 댓글을 찾을 수 없습니다.' });
         }
 
-        postToUpdate.Replys = postToUpdate.Replys.filter(Reply => Reply._id != Reply_id);
+        let replyToDelete = commentToUpdate.replies.id(reply_id);
+
+        if (!replyToDelete || replyToDelete.length == 0) {
+            return res.status(404).json({ message: '해당 답글을 찾을 수 없습니다.' });
+        }
+
+        commentToUpdate.replies = commentToUpdate.replies.filter(reply => reply._id.toString() !== reply_id);
 
         await postToUpdate.save();
   
-        res.status(200).json({ ReplyToDelete });
+        res.status(200).json({ replyToDelete });
     }
     catch (err) {
         next(err);
