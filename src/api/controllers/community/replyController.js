@@ -134,11 +134,54 @@ async function deleteReply(req, res, next) {
     }
 };
 
+async function reportReply(req, res, next) {
+    try {
+        const reply_id = req.body.reply_id;
+        const post_id = req.params.post_id;
+        const comment_id = req.params.comment_id;
+
+        if (!post_id) {
+            return res.status(400).json({ message: 'post_id 값이 null입니다.' });
+        }
+        if (!comment_id) {
+            return res.status(400).json({ message: 'comment_id 값이 null입니다.' });
+        }
+        if(!reply_id) {
+            return res.status(400).json({ message: 'reply_id 값이 null입니다.' });
+        }
+        
+        let post = await Post.findById(post_id);
+        if(!post || post.length == 0) {
+            return res.status(404).json({ massege: '해당 게시물을 찾을 수 없습니다.' })
+        }
+
+        let comment = post.comments.id(comment_id);
+        if (!comment || comment.length == 0) {
+            return res.status(404).json({ message: '해당 댓글을 찾을 수 없습니다.' });
+        }
+
+        let reply = comment.replies.id(reply_id);
+        if (!reply || reply.length == 0) {
+            return res.status(404).json({ message: '해당 답글을 찾을 수 없습니다.' });
+        }
+
+        reply.reports += 1;
+        
+        await post.save();
+
+        res.status(200).json({ reply });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     addReply,
     /*
     getReply,
     */
     updateReply,
-    deleteReply
+    deleteReply,
+    reportReply
 };
