@@ -198,6 +198,66 @@ async function searchPost(req, res, next) {
     }
 };
 
+async function searchPost(req, res, next) {
+    try {
+        const { mainCategory, searchBy, searchWord } = req.query;
+   
+        if(!COMMUNITY.category.includes(mainCategory)) {
+            return res.status(401).json({ message: '카테고리 설정이 잘못되었습니다.' });
+        }
+
+        let query = { mainCategory: mainCategory };
+        
+        if (searchBy === 'title') {
+            query.title = new RegExp(searchWord, 'i');
+        } else if (searchBy === 'userName') {
+            query.userName = new RegExp(searchWord, 'i');
+        } else if (searchBy === 'content') {
+            query.content = new RegExp(searchWord, 'i');
+        } else {
+            return res.status(400).json({ message: '유효하지 않은 카테고리입니다.(제목, 작성자, 본문 중에 선택)' });
+        }
+
+        const searched = await Post.find(query);
+    
+        if(!searched){ 
+            return res.status(404).json({ massege: '검색 결과가 없습니다.' })
+        }
+        
+        // 아래 코드 작동 안 되고 있음
+        const posts = setFunc(searched, ['registeredAt', 'updatedAt'], toKST);
+
+        res.status(200).json({ posts });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
+async function reportPost(req, res, next) {
+    try {
+        const post_id = req.body.post_id;
+
+        if(!post_id) {
+            return res.status(400).json({ message: 'post_id 값이 null입니다.' });
+        }
+
+        const post = await Post.findByIdAndUpdate(
+            { _id: post_id },
+            { $inc: { reports: 1 } },
+            { new: true }
+        );
+
+        if(!post){ 
+            return res.status(404).json({ massege: '해당 게시물을 찾을 수 없습니다.' })
+        }
+
+        res.status(200).json({ post });
+    }
+    catch (err) {
+        next(err);
+    }
+};
 
 module.exports = {
     addPost,
@@ -205,5 +265,6 @@ module.exports = {
     listPost,
     updatePost,
     deletePost,
-    searchPost
+    searchPost,
+    reportPost
 };

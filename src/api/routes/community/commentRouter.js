@@ -9,5 +9,6 @@ router.get('', commentController.getComment);
 */
 router.patch('/:post_id', commentController.updateComment);
 router.delete('/:post_id', commentController.deleteComment);
+router.post('/report/:post_id', commentController.reportComment);
 
 module.exports = router;

@@ -111,11 +111,45 @@ async function deleteComment(req, res, next) {
     }
 };
 
+async function reportComment(req, res, next) {
+    try {
+        const comment_id = req.body.comment_id;
+        const post_id = req.params.post_id;
+
+        if (!post_id) {
+            return res.status(400).json({ message: 'post_id 값이 null입니다.' });
+        }
+        if (!comment_id) {
+            return res.status(400).json({ message: 'comment_id 값이 null입니다.' });
+        }
+
+        const post = await Post.findById(post_id);
+        if (!post) {
+            return res.status(404).json({ message: '해당 게시물을 찾을 수 없습니다.' });
+        }
+
+        const comment = post.comments.id(comment_id);
+        if (!comment) {
+            return res.status(404).json({ message: '해당 댓글을 찾을 수 없습니다.' });
+        }
+
+        comment.reports += 1;
+        
+        await post.save();
+
+        res.status(200).json({ comment });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     addComment,
     /*
     getComment,
     */
     updateComment,
-    deleteComment
+    deleteComment,
+    reportComment
 };
