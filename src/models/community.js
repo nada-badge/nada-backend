@@ -13,6 +13,14 @@ const ReplySchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    isEdited: {
+        type: Boolean,
+        default: false
+    },
+    reports: {
+        type: Number,
+        default: 0
+    },   
     registeredAt: {
         type: Date,
         required: true,
@@ -48,6 +56,10 @@ const CommentSchema = new mongoose.Schema({
     isDeleted: {
         type: Boolean,
         default: false
+    },
+    reports: {
+        type: Number,
+        default: 0
     },
     registeredAt: {
         type: Date,
@@ -98,6 +110,10 @@ const PostSchema = new mongoose.Schema({
         type: CommentSchema
     }],
     views: {
+        type: Number,
+        default: 0
+    },
+    reports: {
         type: Number,
         default: 0
     },

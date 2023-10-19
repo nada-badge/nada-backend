@@ -9,5 +9,6 @@ router.get('/list', postController.listPost);
 router.patch('', postController.updatePost);
 router.delete('', postController.deletePost);
 router.get('/search', postController.searchPost);
+router.post('/report', postController.reportPost);
 
 module.exports = router;
