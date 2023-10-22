@@ -85,20 +85,32 @@ async function getPost(req, res, next) {
 
 async function listPost(req, res, next) {
     try {
-        const { category, field, area } = req.query;
+        const { mainCategory, field, area } = req.query;
    
-        if(!COMMUNITY.category.includes(category)) {
-            return res.status(401).json({ message: '카테고리 설정이 잘못되었습니다.' });
+        if(!COMMUNITY.category.includes(mainCategory)) {
+            return res.status(401).json({ message: '메인 카테고리 설정이 잘못되었습니다.' });
         }
 
-        let query = { category };
+        let query = { mainCategory };
 
-        if(["모집", "홍보"].includes(category)) {
-            if (field) { query.field = field; }
-            if (area) { query.area = area; }
+        if(["모집", "홍보"].includes(mainCategory)) {
+            if (field) {
+                const decodedField = decodeURIComponent(field).split(',');
+                if (Array.isArray(decodedField)) { query.field = { $in: decodedField }; }
+                else { query.field = decodedField; }
+            }
+            if (area) {
+                const decodedArea = decodeURIComponent(area).split(',');
+                if (Array.isArray(decodedArea)) { query.area = { $in: decodedArea }; }
+                else { query.area = decodedArea; }
+            }
         }
         
         searched = await Post.find(query);
+
+        if(!searched || searched.length == 0){ 
+            return res.status(404).json({ massege: '해당 게시물을 찾을 수 없습니다.' })
+        }
 
         // 아래 코드 작동 안 되고 있음
         const posts = setFunc(searched, ['registeredAt', 'updatedAt'], toKST);
