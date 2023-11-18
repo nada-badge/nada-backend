@@ -85,25 +85,18 @@ async function getPost(req, res, next) {
 
 async function listPost(req, res, next) {
     try {
-        const { mainCategory, field, area } = req.query;
+        const { mainCategory, field, area, category } = req.query;
    
         if(!COMMUNITY.category.includes(mainCategory)) {
             return res.status(401).json({ message: '메인 카테고리 설정이 잘못되었습니다.' });
         }
-
+        
         let query = { mainCategory };
 
         if(["모집", "홍보"].includes(mainCategory)) {
-            if (field) {
-                const decodedField = decodeURIComponent(field).split(',');
-                if (Array.isArray(decodedField)) { query.field = { $in: decodedField }; }
-                else { query.field = decodedField; }
-            }
-            if (area) {
-                const decodedArea = decodeURIComponent(area).split(',');
-                if (Array.isArray(decodedArea)) { query.area = { $in: decodedArea }; }
-                else { query.area = decodedArea; }
-            }
+            if (field && field !== "전체") { query.field = { $in: field }; }
+            if (area && area !== "전국") { query.area = { $in: area }; }
+            if (category && category !== "전체") { query.category = { $in: category }; }
         }
         
         searched = await Post.find(query);
