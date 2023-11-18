@@ -17,11 +17,11 @@ async function addPost(req, res, next) {
             return res.status(401).json({ message: '메인 카테고리 설정이 잘못되었습니다.' });
         }
 
-        if(field !== "전체" && !COMMUNITY.field.includes(field)) {
+        if(field !== "전체" && !field.every(seletedField => COMMUNITY.field.includes(seletedField))) {
             return res.status(401).json({ message: '유효하지 않은 분야입니다.' });
         }
 
-        if(area !== "전국" && !COMMUNITY.area.includes(area)) {
+        if(area !== "전국" && !area.every(selectedArea => COMMUNITY.area.includes(selectedArea))) {
             return res.status(401).json({ message: '장소 설정이 잘못되었습니다.' });
         }
 
@@ -85,20 +85,25 @@ async function getPost(req, res, next) {
 
 async function listPost(req, res, next) {
     try {
-        const { category, field, area } = req.query;
+        const { mainCategory, field, area, category } = req.query;
    
-        if(!COMMUNITY.category.includes(category)) {
-            return res.status(401).json({ message: '카테고리 설정이 잘못되었습니다.' });
+        if(!COMMUNITY.category.includes(mainCategory)) {
+            return res.status(401).json({ message: '메인 카테고리 설정이 잘못되었습니다.' });
         }
+        
+        let query = { mainCategory };
 
-        let query = { category };
-
-        if(["모집", "홍보"].includes(category)) {
-            if (field) { query.field = field; }
-            if (area) { query.area = area; }
+        if(["모집", "홍보"].includes(mainCategory)) {
+            if (field && field !== "전체") { query.field = { $in: field }; }
+            if (area && area !== "전국") { query.area = { $in: area }; }
+            if (category && category !== "전체") { query.category = { $in: category }; }
         }
         
         searched = await Post.find(query);
+
+        if(!searched || searched.length == 0){ 
+            return res.status(404).json({ massege: '해당 게시물을 찾을 수 없습니다.' })
+        }
 
         // 아래 코드 작동 안 되고 있음
         const posts = setFunc(searched, ['registeredAt', 'updatedAt'], toKST);
