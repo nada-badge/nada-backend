@@ -3,6 +3,6 @@ const topPostController = require('../../controllers/community/topPostController
 
 const router = express.Router();
 
-router.patch('', topPostController.topPosts);
+router.get('', topPostController.topPosts);
 
 module.exports = router;
