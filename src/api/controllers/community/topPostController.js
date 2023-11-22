@@ -9,7 +9,7 @@ async function topPosts(req, res, next) {
 	
 	let posts;
         if (totalPostCount <= 5) {
-            posts = await Post.find().sort({ views: -1 }).exec();
+            posts = await Post.find({ 'registeredAt': { $gte: threeDaysAgo} }).sort({ views: -1 }).exec();
 
         } else {
             posts = await Post.find({ 'registeredAt': {$gte: threeDaysAgo} })
