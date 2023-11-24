@@ -21,6 +21,15 @@ const ActivitySchema = new mongoose.Schema({
         type: String,
         required: true
     }],
+    institute: {
+        type: String
+    },
+    instituteURL: {
+        type: String
+    },
+    area: {
+        type: String
+    },
     content: {
         type: String
     },
