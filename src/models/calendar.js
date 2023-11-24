@@ -21,7 +21,7 @@ const ScheduleSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    area: {
+    region: {
         type: String,
         required: true
     },
