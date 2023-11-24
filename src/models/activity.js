@@ -9,18 +9,18 @@ const ActivitySchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    field: {
-        type: Number,
+    field: [{
+        type: String,
         required: true
-    },
+    }],
     category: {
-        type: Number,
-        required: true
-    },
-    area: {
         type: String,
         required: true
     },
+    region: [{
+        type: String,
+        required: true
+    }],
     content: {
         type: String
     },

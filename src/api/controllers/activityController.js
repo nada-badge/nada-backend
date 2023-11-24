@@ -1,10 +1,11 @@
 const { Activity } = require('../../models/activity');
 const { toKST, setFunc } = require('../../common/utils/converter');
+const ACTIVITY = require('../../common/const/activity');
 
 async function addActivity(req, res, next) {
     try {
-        const { activityName, groupName, field, category, area, content, startedAt, endedAt } = req.body;
-        
+        const { activityName, groupName, field, category, region, content, startedAt, endedAt } = req.body;
+
         const start = new Date(startedAt);
         const end = new Date(endedAt);
 
@@ -33,7 +34,7 @@ async function addActivity(req, res, next) {
             groupName: groupName,
             field: field,
             category: category,
-            area: area,
+            region: region,
             content: content,
             startedAt: startedAt,
             endedAt: endedAt
