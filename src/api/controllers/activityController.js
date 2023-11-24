@@ -6,6 +6,18 @@ async function addActivity(req, res, next) {
     try {
         const { activityName, groupName, field, category, region, content, startedAt, endedAt } = req.body;
 
+        if(category !== "전체" && !ACTIVITY.inActivity.includes(category)) {
+            return res.status(401).json({ message: '카테고리 설정이 잘못되었습니다.' });
+        }
+
+        if(field !== "전체" && !field.every(seletedField => ACTIVITY.field.includes(seletedField))) {
+            return res.status(401).json({ message: '유효하지 않은 분야입니다.' });
+        }
+
+        if(region !== "전국" && !region.every(selectedRegion => ACTIVITY.region.includes(selectedRegion))) {
+            return res.status(401).json({ message: '장소 설정이 잘못되었습니다.' });
+        }
+
         const start = new Date(startedAt);
         const end = new Date(endedAt);
 
