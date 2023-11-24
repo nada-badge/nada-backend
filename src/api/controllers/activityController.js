@@ -86,15 +86,16 @@ async function getActivity(req, res, next) {
 
 async function listActivity(req, res, next) {
     try {
-        const groupName = req.query.groupName;
-        let searched;
+        const { groupName, field, region, category } = req.query;
+       
+        let query = {};
         
-        if(groupName == null) {
-            searched = await Activity.find();
-        }
-        else {
-            searched = await Activity.find({ groupName });
-        }
+        if (groupName) { query.groupName = groupName }
+        if (field && field !== "전체") { query.field = { $in: field }; }
+        if (region && region !== "전국") { query.region = { $in: region }; }
+        if (category && category !== "전체") { query.category = { $in: category }; }
+
+        searched = await Activity.find(query);
        
         if(!searched || searched.length == 0) {
             return res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
