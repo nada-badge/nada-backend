@@ -9,17 +9,26 @@ const ActivitySchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    field: {
-        type: Number,
-        required: true
-    },
-    category: {
-        type: Number,
-        required: true
-    },
-    area: {
+    field: [{
         type: String,
         required: true
+    }],
+    category: {
+        type: String,
+        required: true
+    },
+    region: [{
+        type: String,
+        required: true
+    }],
+    institute: {
+        type: String
+    },
+    instituteURL: {
+        type: String
+    },
+    area: {
+        type: String
     },
     content: {
         type: String

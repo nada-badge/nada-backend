@@ -94,7 +94,7 @@ const PostSchema = new mongoose.Schema({
         type: String,
         required: true
     }],
-    area: [{
+    region: [{
         type: String,
         required: true
     }],

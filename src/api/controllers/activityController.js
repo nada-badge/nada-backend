@@ -1,10 +1,23 @@
 const { Activity } = require('../../models/activity');
 const { toKST, setFunc } = require('../../common/utils/converter');
+const ACTIVITY = require('../../common/const/activity');
 
 async function addActivity(req, res, next) {
     try {
-        const { activityName, groupName, field, category, area, content, startedAt, endedAt } = req.body;
-        
+        const { activityName, groupName, field, category, region, institute, instituteURL, area, content, startedAt, endedAt } = req.body;
+
+        if(category !== "전체" && !ACTIVITY.inActivity.includes(category)) {
+            return res.status(401).json({ message: '카테고리 설정이 잘못되었습니다.' });
+        }
+
+        if(field !== "전체" && !field.every(seletedField => ACTIVITY.field.includes(seletedField))) {
+            return res.status(401).json({ message: '유효하지 않은 분야입니다.' });
+        }
+
+        if(region !== "전국" && !region.every(selectedRegion => ACTIVITY.region.includes(selectedRegion))) {
+            return res.status(401).json({ message: '장소 설정이 잘못되었습니다.' });
+        }
+
         const start = new Date(startedAt);
         const end = new Date(endedAt);
 
@@ -33,6 +46,9 @@ async function addActivity(req, res, next) {
             groupName: groupName,
             field: field,
             category: category,
+            region: region,
+            institute: institute,
+            instituteURL: instituteURL,
             area: area,
             content: content,
             startedAt: startedAt,
@@ -73,15 +89,16 @@ async function getActivity(req, res, next) {
 
 async function listActivity(req, res, next) {
     try {
-        const groupName = req.query.groupName;
-        let searched;
+        const { groupName, field, region, category } = req.query;
+       
+        let query = {};
         
-        if(groupName == null) {
-            searched = await Activity.find();
-        }
-        else {
-            searched = await Activity.find({ groupName });
-        }
+        if (groupName) { query.groupName = groupName }
+        if (field && field !== "전체") { query.field = { $in: field }; }
+        if (region && region !== "전국") { query.region = { $in: region }; }
+        if (category && category !== "전체") { query.category = { $in: category }; }
+
+        searched = await Activity.find(query);
        
         if(!searched || searched.length == 0) {
             return res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
