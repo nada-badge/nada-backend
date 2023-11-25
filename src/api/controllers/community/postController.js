@@ -61,7 +61,7 @@ async function getPost(req, res, next) {
         const id = req.query._id;
     
         if(id == null) {
-            return res.status(400).json({ message: 'id 값이 null입니다.' });
+            return res.status(400).json({ message: '_id(post) 값이 null입니다.' });
         }
         
         const searched = await Post.findOneAndUpdate(
@@ -121,7 +121,7 @@ async function updatePost(req, res, next) {
         const id = toUpdate._id;
 
         if(id == null) {
-            return res.status(400).json({ message: 'id 값이 null입니다.' });
+            return res.status(400).json({ message: '_id(post) 값이 null입니다.' });
         }
 
         let post = await Post.findById(id);
@@ -149,7 +149,7 @@ async function deletePost(req, res, next) {
         const id = toDelete._id;
 
         if(id == null) {
-            return res.status(400).json({ message: 'id 값이 null입니다.' });
+            return res.status(400).json({ message: '_id(post) 값이 null입니다.' });
         }
 
         let post = await Post.findById(id);
@@ -241,10 +241,10 @@ async function searchPost(req, res, next) {
 
 async function reportPost(req, res, next) {
     try {
-        const post_id = req.body.post_id;
+        const post_id = req.body._id;
 
         if(!post_id) {
-            return res.status(400).json({ message: 'post_id 값이 null입니다.' });
+            return res.status(400).json({ message: '_id(post) 값이 null입니다.' });
         }
 
         const post = await Post.findByIdAndUpdate(
