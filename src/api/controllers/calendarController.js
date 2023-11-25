@@ -6,7 +6,8 @@ const { isWithinInterval, isSameMonth, isSameYear } = require('date-fns');
 
 async function addBookmark(req, res, next) {
     try {
-        const { email, activity_id } = req.body;
+        const { email, _id } = req.body;
+        const activity_id = _id;
 
         const user = await User.findOne({ email });
         if (!user || user.length == 0) {
@@ -114,6 +115,7 @@ async function listBookmark(req, res, next) {
 async function removeBookmark(req, res, next) {
     try {
         const email = req.query.email;
+        const bookmark_id = req.query._id;
 
         const user = await User.findOne({ email });
         if (!user || user.length == 0) {

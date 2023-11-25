@@ -44,7 +44,7 @@ async function addReply(req, res, next) {
 
 async function updateReply(req, res, next) {
     try {
-        const reply_id = req.body.reply_id;
+        const reply_id = req.body._id;
         const post_id = req.params.post_id;
         const comment_id = req.params.comment_id;
 
@@ -55,7 +55,7 @@ async function updateReply(req, res, next) {
             return res.status(400).json({ message: 'comment_id 값이 null입니다.' });
         }
         if(!reply_id) {
-            return res.status(400).json({ message: 'reply_id 값이 null입니다.' });
+            return res.status(400).json({ message: '_id(reply) 값이 null입니다.' });
         }
 
         let postToUpdate = await Post.findById(post_id);
@@ -91,7 +91,7 @@ async function updateReply(req, res, next) {
 
 async function deleteReply(req, res, next) {
     try {
-        const reply_id = req.body.reply_id;
+        const reply_id = req.body._id;
         const post_id = req.params.post_id;
         const comment_id = req.params.comment_id;
 
@@ -102,7 +102,7 @@ async function deleteReply(req, res, next) {
             return res.status(400).json({ message: 'comment_id 값이 null입니다.' });
         }
         if(!reply_id) {
-            return res.status(400).json({ message: 'reply_id 값이 null입니다.' });
+            return res.status(400).json({ message: '_id(reply) 값이 null입니다.' });
         }
 
         let postToUpdate = await Post.findById(post_id);
@@ -136,7 +136,7 @@ async function deleteReply(req, res, next) {
 
 async function reportReply(req, res, next) {
     try {
-        const reply_id = req.body.reply_id;
+        const reply_id = req.body._id;
         const post_id = req.params.post_id;
         const comment_id = req.params.comment_id;
 
@@ -147,7 +147,7 @@ async function reportReply(req, res, next) {
             return res.status(400).json({ message: 'comment_id 값이 null입니다.' });
         }
         if(!reply_id) {
-            return res.status(400).json({ message: 'reply_id 값이 null입니다.' });
+            return res.status(400).json({ message: '_id(reply) 값이 null입니다.' });
         }
         
         let post = await Post.findById(post_id);

@@ -37,14 +37,14 @@ async function addComment(req, res, next) {
 
 async function updateComment(req, res, next) {
     try {
-        const comment_id = req.body.comment_id;
+        const comment_id = req.body._id;
         const post_id = req.params.post_id;
 
         if(post_id == null) {
             return res.status(400).json({ message: 'post_id 값이 null입니다.' });
         }
         if(comment_id == null) {
-            return res.status(400).json({ message: 'comment_id 값이 null입니다.' });
+            return res.status(400).json({ message: '_id(comment) 값이 null입니다.' });
         }
 
         let postToUpdate = await Post.findById(post_id);
@@ -74,14 +74,14 @@ async function updateComment(req, res, next) {
 
 async function deleteComment(req, res, next) {
     try {
-        const comment_id = req.body.comment_id;
+        const comment_id = req.body._id;
         const post_id = req.params.post_id;
 
         if(post_id == null) {
             return res.status(400).json({ message: 'post_id 값이 null입니다.' });
         }
         if(comment_id == null) {
-            return res.status(400).json({ message: 'comment_id 값이 null입니다.' });
+            return res.status(400).json({ message: '_id(comment) 값이 null입니다.' });
         }
 
         let postToUpdate = await Post.findById(post_id);
@@ -113,14 +113,14 @@ async function deleteComment(req, res, next) {
 
 async function reportComment(req, res, next) {
     try {
-        const comment_id = req.body.comment_id;
+        const comment_id = req.body._id;
         const post_id = req.params.post_id;
 
         if (!post_id) {
             return res.status(400).json({ message: 'post_id 값이 null입니다.' });
         }
         if (!comment_id) {
-            return res.status(400).json({ message: 'comment_id 값이 null입니다.' });
+            return res.status(400).json({ message: '_id(comment) 값이 null입니다.' });
         }
 
         const post = await Post.findById(post_id);
