@@ -41,6 +41,10 @@ const ActivitySchema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    reports: {
+        type: Number,
+        default: 0
+    },
     registeredAt: {
         type: Date,
         required: true,
