@@ -5,8 +5,12 @@ const COMMUNITY = require('../../../common/const/community');
 
 async function addPost(req, res, next) {
     try {
-        const { userEmail, userName, mainCategory, category, field, region, title, content } = req.body;
-        
+        console.log(req);
+
+        const { userEmail, userName, mainCategory, category, field, region, title, content, imageUrl } = req.body;
+
+        console.log(req.body);
+
         const isExist = await User.findOne({ 'email': userEmail, 'profile.userName': userName });
 
         if(isExist == null) {
@@ -44,7 +48,8 @@ async function addPost(req, res, next) {
             field: field,
             region: region,
             title: title,
-            content: content
+            content: content,
+            imageUrl: imageUrl,
         });
 
         await post.save();
