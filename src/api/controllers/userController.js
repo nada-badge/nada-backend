@@ -97,10 +97,10 @@ async function checkUserName(req, res, next) {
         const user = await User.findOne({ 'profile.userName': userName } );
         
         if (user) {
-            return res.status(200).json({ result: 0, message: '이미 사용 중인 이름입니다.' });
+            return res.status(401).json({ message: '이미 사용 중인 이름입니다.' });
         }
 
-        res.status(200).json({ result: 1 });
+        res.status(200).json({ message: '사용 가능한 이름입니다.' });
 
     } catch (err) {
         next(err);
@@ -114,10 +114,10 @@ async function checkEmailOverlap(req, res, next) {
         const emailOverlap = await User.findOne({ 'email': email } );
         
         if (emailOverlap) {
-            return res.status(200).json({ result: 0, message: '이미 사용 중인 이메일입니다.' });
+            return res.status(401).json({ message: '이미 사용 중인 이메일입니다.' });
         }
 
-        res.status(200).json({ result: 1 });
+        res.status(200).json({ message: '사용 가능한 이메일입니다.' });
 
     } catch (err) {
         next(err);
@@ -131,10 +131,10 @@ async function checkGroupUser(req, res, next) {
         const groupUser = await User.findOne({ 'groups.groupName': groupName, 'profile.phoneNumber': phoneNumber } );
         
         if (groupUser) {
-            return res.status(200).json({ result: 0, message: '이미 가입한 단체 회원입니다.' });
+            return res.status(401).json({ message: '이미 가입한 단체 회원입니다.' });
         }
 
-        res.status(200).json({ result: 1 });
+        res.status(200).json({ message: '가입된 이력이 없습니다. (가입 가능합니다.)' });
 
     } catch (err) {
         next(err);
