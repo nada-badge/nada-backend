@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const { User, Profile, Group } = require('../../models/user');
 const { validationResult } = require('express-validator');
 const { generateToken } = require('../../common/utils/jwt');
+const ACTIVITY = require('../../common/const/activity');
 
 async function signUp(req, res, next) {
      try {
@@ -18,6 +19,25 @@ async function signUp(req, res, next) {
         const profile = new Profile({
             phoneNumber: reqUser.phoneNumber
         });
+
+        if(reqUser.region) {
+            if(!reqUser.region.every(selectedRegion => ACTIVITY.region.includes(selectedRegion))) {
+                return res.status(401).json({ message: '장소 설정이 잘못되었습니다.' });
+            }
+            if(reqUser.region.length > 2) {
+                return res.status(401).json({ message: '장소는 2개까지만 설정 가능합니다.' });
+            }
+            profile.region = reqUser.region;
+        }
+        if(reqUser.interestField) {
+            if(!reqUser.interestField.every(seletedField => ACTIVITY.field.includes(seletedField))) {
+                return res.status(401).json({ message: '유효하지 않은 분야입니다.' });
+            }
+            if(reqUser.interestField.length > 2) {
+                return res.status(401).json({ message: '관심분야는 2개까지만 설정 가능합니다.' });
+            }
+            profile.interestField = reqUser.interestField;
+        }
 
         const user = new User({ 
             email: reqUser.email,
