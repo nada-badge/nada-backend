@@ -23,6 +23,12 @@ const ProfileSchema = new mongoose.Schema({
     birthday : {
         type: Date
     },
+    region : [{
+        type: String
+    }],
+    interestField  : [{
+        type: String
+    }],
     updatedAt: {
         type: Date,
         required: true,
