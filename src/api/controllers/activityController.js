@@ -10,11 +10,11 @@ async function addActivity(req, res, next) {
             return res.status(401).json({ message: '카테고리 설정이 잘못되었습니다.' });
         }
 
-        if(field !== "전체" && !field.every(seletedField => ACTIVITY.field.includes(seletedField))) {
+        if(field[0] !== "전체" && !field.every(seletedField => ACTIVITY.field.includes(seletedField))) {
             return res.status(401).json({ message: '유효하지 않은 분야입니다.' });
         }
 
-        if(region !== "전국" && !region.every(selectedRegion => ACTIVITY.region.includes(selectedRegion))) {
+        if(region[0] !== "전국" && !region.every(selectedRegion => ACTIVITY.region.includes(selectedRegion))) {
             return res.status(401).json({ message: '장소 설정이 잘못되었습니다.' });
         }
 
@@ -95,9 +95,9 @@ async function listActivity(req, res, next) {
         let query = {};
         
         if (groupName) { query.groupName = groupName }
-        if (field && field !== "전체") { query.field = { $in: field }; }
-        if (region && region !== "전국") { query.region = { $in: region }; }
-        if (category && category !== "전체") { query.category = { $in: category }; }
+        if (field[0] !== "전체") { query.field = { $in: field }; }
+        if (region[0] !== "전국") { query.region = { $in: region }; }
+        if (category[0] !== "전체") { query.category = { $in: category }; }
 
         searched = await Activity.find(query);
        

@@ -5,11 +5,7 @@ const COMMUNITY = require('../../../common/const/community');
 
 async function addPost(req, res, next) {
     try {
-        console.log(req);
-
         const { userEmail, userName, mainCategory, category, field, region, title, content, imageUrl } = req.body;
-
-        console.log(req.body);
 
         const isExist = await User.findOne({ 'email': userEmail, 'profile.userName': userName });
 
@@ -21,11 +17,11 @@ async function addPost(req, res, next) {
             return res.status(401).json({ message: '메인 카테고리 설정이 잘못되었습니다.' });
         }
 
-        if(field !== "전체" && !field.every(seletedField => COMMUNITY.field.includes(seletedField))) {
+        if(field[0] !== "전체" && !field.every(seletedField => COMMUNITY.field.includes(seletedField))) {
             return res.status(401).json({ message: '유효하지 않은 분야입니다.' });
         }
 
-        if(region !== "전국" && !region.every(selectedRegion => COMMUNITY.region.includes(selectedRegion))) {
+        if(region[0] !== "전국" && !region.every(selectedRegion => COMMUNITY.region.includes(selectedRegion))) {
             return res.status(401).json({ message: '장소 설정이 잘못되었습니다.' });
         }
 
@@ -99,9 +95,9 @@ async function listPost(req, res, next) {
         let query = { mainCategory };
 
         if(["모집", "홍보"].includes(mainCategory)) {
-            if (field && field !== "전체") { query.field = { $in: field }; }
-            if (region && region !== "전국") { query.region = { $in: region }; }
-            if (category && category !== "전체") { query.category = { $in: category }; }
+            if (field[0] !== "전체") { query.field = { $in: field }; }
+            if (region[0] !== "전국") { query.region = { $in: region }; }
+            if (category[0] !== "전체") { query.category = { $in: category }; }
         }
         
         searched = await Post.find(query);
