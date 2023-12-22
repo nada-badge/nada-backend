@@ -2,7 +2,7 @@ const multer = require('multer');
 const multerGoogleStorage = require('multer-google-storage');
 const config = require('../../config/config');
 const IMAGE = require('../const/imageSection');
- 
+
 const uploadHandler = multer({
     storage: multerGoogleStorage.storageEngine({
         bucket: config.BUCKET_NAME,
