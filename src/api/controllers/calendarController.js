@@ -55,12 +55,11 @@ async function addBookmark(req, res, next) {
 
 async function listBookmark(req, res, next) {
     try {
-        const email = req.query.email;
-        const targetYear = req.query.year;
-        const targetMonth = req.query.month;
-        
-        if ((targetYear && !targetMonth) || (!targetYear && targetMonth)) {
-            return res.status(400).json({ message: '기준 연도와 월을 함께 입력해주세요.' });
+
+        const { email, start, end } = req.query;
+
+        if ((start && !end) || (!start && end)) {
+            return res.status(400).json({ message: '시작 일자와 종료 일자를 함께 입력해주세요.' });
         }
 
         const user = await User.findOne({ email });
@@ -86,25 +85,31 @@ async function listBookmark(req, res, next) {
         });
         
         let activitiesUTC = (await Promise.all(activitiesPromises)).filter(activity => activity !== null);
-   
-        if (targetMonth && targetYear) {
+
+        if (start && end) {
+            const startDate = new Date(start);
+            const endDate = new Date(end);
+    
             activitiesUTC = activitiesUTC.filter(activity => {
                 const activityStartDate = new Date(activity.startedAt);
                 const activityEndDate = new Date(activity.endedAt);
-    
-                // 시작일과 종료일 사이에 targetMonth 및 targetYear가 있는 경우 선택
-                if (
-                    (isWithinInterval(new Date(targetYear, targetMonth - 1, 1), { start: activityStartDate, end: activityEndDate }) ||
-                    isSameMonth(new Date(targetYear, targetMonth - 1, 1), activityStartDate)) &&
-                    isSameYear(new Date(targetYear, targetMonth - 1, 1), activityStartDate)
-                ) {
+ 
+                if ((activityStartDate >= startDate && activityStartDate <= endDate) ||
+                    (activityEndDate >= startDate && activityEndDate <= endDate) ||
+                    (activityStartDate <= startDate && activityEndDate >= endDate))
+                {
                     return true;
                 }
                 return false;
             });
         }
+
+        if (!activitiesUTC || activitiesUTC.length == 0) {
+            return res.status(404).json({ message: '북마크된 일정을 찾을 수 없습니다.' });
+        }
+
         const activities = setFunc(activitiesUTC, ['registeredAt', 'updatedAt', 'startedAt', 'endedAt'], toKST);
-        
+
         res.status(200).json({ activities });
     }
     catch (err) {
