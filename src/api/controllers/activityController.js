@@ -73,7 +73,11 @@ async function getActivity(req, res, next) {
             return res.status(400).json({ message: 'id 값이 null입니다.' });
         }
         
-        const searched = await Activity.findById(id);
+        const searched = await Activity.findOneAndUpdate(
+            { _id: id },
+            { $inc: { views: 1 } },
+            { new: true }
+        );
 
         if(!searched){ 
             return res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
