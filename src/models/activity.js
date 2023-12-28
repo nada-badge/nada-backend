@@ -36,6 +36,10 @@ const ActivitySchema = new mongoose.Schema({
     imageUrl: [{
         type: String
     }],
+    views: {
+        type: Number,
+        default: 0
+    },
     startedAt: {
         type: Date,
         required: true
