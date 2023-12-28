@@ -2,7 +2,6 @@ const { Calendar } = require('../../models/calendar');
 const { User } = require('../../models/user');
 const { Activity } = require('../../models/activity');
 const { toKST, setFunc } = require('../../common/utils/converter');
-const { isWithinInterval, isSameMonth, isSameYear } = require('date-fns');
 
 async function addBookmark(req, res, next) {
     try {
@@ -119,8 +118,8 @@ async function listBookmark(req, res, next) {
 
 async function removeBookmark(req, res, next) {
     try {
-        const email = req.query.email;
-        const bookmark_id = req.query._id;
+        const { email, _id } = req.body;
+        const bookmark_id = _id;
 
         const user = await User.findOne({ email });
         if (!user || user.length == 0) {
