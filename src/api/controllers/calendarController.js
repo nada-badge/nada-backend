@@ -2,7 +2,6 @@ const { Calendar } = require('../../models/calendar');
 const { User } = require('../../models/user');
 const { Activity } = require('../../models/activity');
 const { toKST, setFunc } = require('../../common/utils/converter');
-const { isWithinInterval, isSameMonth, isSameYear } = require('date-fns');
 
 async function addBookmark(req, res, next) {
     try {
