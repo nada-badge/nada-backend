@@ -153,8 +153,45 @@ async function removeBookmark(req, res, next) {
     }
 }
 
+async function isBookmarked(req, res, next) {
+    try {
+        const { email, _id } = req.body;
+        const bookmark_id = _id;
+
+        const user = await User.findOne({ email });
+        if (!user || user.length == 0) {
+            return res.status(401).json({ message: '사용자 확인이 불가능합니다.' });
+        }
+
+        const calendarId = user.calendar;
+
+        if (!calendarId) {
+            return res.status(404).json({ message: '사용자의 캘린더 정보가 없습니다.' });
+        }
+
+        const calendar = await Calendar.findById(calendarId);
+        if (!calendar || calendar.length == 0) {
+            return res.status(404).json({ message: '사용자의 캘린더를 찾을 수 없습니다.' });
+        }
+
+        const activity = await Activity.findById(bookmark_id);
+
+        if(!activity || activity.length == 0) {
+            return res.status(404).json({ massege: '해당 활동을 찾을 수 없습니다.' })
+        }
+
+        const isBookmarked = calendar.activities.includes(activity._id);
+
+        res.status(200).json({ 'isBookmarked' : isBookmarked });
+    }
+    catch (err) {
+        next(err);
+    }
+}
+
 module.exports = {
     addBookmark,
     listBookmark,
-    removeBookmark
+    removeBookmark,
+    isBookmarked
 };
