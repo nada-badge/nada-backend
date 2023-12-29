@@ -11,6 +11,7 @@ async function topPosts(req, res, next) {
         if (totalPostCount <= 5) {
             posts = await Post.find().sort({ views: -1 }).exec();
 
+<<<<<<< HEAD
         } if (posts.length === 0) {
             posts = null;
         } else {
@@ -20,6 +21,14 @@ async function topPosts(req, res, next) {
         }
 
 	res.status(200).json({ posts: posts });
+=======
+        } else {
+            posts = await Post.find({ 'registeredAt': {$gte: threeDaysAgo} })
+            .sort({ views: -1 })
+            .limit(5);
+        }
+	res.status(200).json({posts});
+>>>>>>> 01a508b92fbcc38665113107ef144e79ad409e4e
     }
     catch(err) {
         next(err);
