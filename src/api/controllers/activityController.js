@@ -114,6 +114,38 @@ async function listActivity(req, res, next) {
     }
 };
 
+async function searchActivity(req, res, next) {
+    try {
+        const { activityName, groupName, content } = req.query;
+   
+        if (!activityName && !content && !groupName) {
+            return res.status(400).json({ message: '적어도 하나의 검색어를 입력하세요.' });
+        }
+
+        let query = {};
+
+        if (activityName) {
+            query.activityName = new RegExp(activityName, 'i');
+        }
+        if (content) {
+            query.content = new RegExp(content, 'i');
+        }
+        if (groupName) {
+            query.groupName = new RegExp(groupName, 'i');
+        }
+        const searchResult = await Activity.find(query);
+        
+        if(!searchResult){ 
+            return res.status(404).json({ massege: '검색 결과가 없습니다.' })
+        }
+
+        res.status(200).json({ result: searchResult });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
 async function updateActivity(req, res, next) {
     try {
         const toUpdate = req.body;
@@ -171,6 +203,7 @@ module.exports = {
     addActivity,
     getActivity,
     listActivity,
+    searchActivity,
     updateActivity,
     deleteActivity
 };
