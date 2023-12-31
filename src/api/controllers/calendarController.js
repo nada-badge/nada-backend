@@ -155,7 +155,7 @@ async function removeBookmark(req, res, next) {
 
 async function isBookmarked(req, res, next) {
     try {
-        const { email, _id } = req.body;
+        const { email, _id } = req.query;
         const bookmark_id = _id;
 
         const user = await User.findOne({ email });
