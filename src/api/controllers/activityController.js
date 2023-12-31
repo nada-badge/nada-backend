@@ -1,4 +1,5 @@
 const { Activity } = require('../../models/activity');
+const { Profile, User } = require('../../models/user');
 const { toKST, setFunc } = require('../../common/utils/converter');
 const ACTIVITY = require('../../common/const/activity');
 
@@ -146,6 +147,31 @@ async function updateActivity(req, res, next) {
     }
 };
 
+async function recommendActivity(req, res, next) {
+    try {
+        const { region, interestField } = req.query;
+        const matchingProfiles = await Profile.find({
+            region: { $in: region },
+            interestField: { $in: interestField },
+        });
+
+        const userIds = matchingProfiles.map((profile) => profile._id);
+
+        const userGroupNames = await User.find({ _id: { $in: userIds } }, 'groups.groupName');
+
+        const recommendedActivities = await Activity.find({
+            region: { $in: region },
+            field: { $in: interestField }, 
+            groupName: { $nin: userGroupNames.map(group => group.groups.map(group => group.groupName)) } 
+        }).limit(4);
+
+        res.status(200).json({ recommendActivity: recommendedActivities });
+    } catch (err) {
+        next(err);
+    }
+};
+
+
 async function deleteActivity(req, res, next) {
     try {
         const toDelete = req.body;
@@ -170,11 +196,11 @@ async function deleteActivity(req, res, next) {
     }
 };
 
-
 module.exports = {
     addActivity,
     getActivity,
     listActivity,
+    recommendActivity,
     updateActivity,
     deleteActivity
 };
