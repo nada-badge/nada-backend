@@ -2,6 +2,8 @@ const express = require('express');
 const router = require('./api/routes/router');
 const connectDB = require('./loader/db');
 const config = require('./config/config');
+const logger = require('./config/logger');
+const morgan = require('morgan');
 const cors = require('cors');
 
 let corsOptions = {
@@ -19,9 +21,11 @@ app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.use(morgan('combined', {stream: logger.stream}));
+
 app.use(router);
 
 // 서버 시작
 app.listen(config.PORT, () => {
-  console.log('서버가 시작되었습니다.');
+    logger.info(`Listening on port ${config.PORT}...`);
 });
