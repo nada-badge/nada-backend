@@ -47,8 +47,13 @@ logger.stream = {
     }
 }
 
+const combined = '":method :url HTTP/:http-version :status :res[content-length] :referrer :user-agent' 
+
 if(config.NODE_ENV !== 'production') {
     logger.add(new winston.transports.Console(options.console));
 }
 
-module.exports = logger;
+module.exports = {
+    logger, 
+    combined 
+};
