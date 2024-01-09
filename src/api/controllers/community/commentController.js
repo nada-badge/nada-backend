@@ -35,6 +35,33 @@ async function addComment(req, res, next) {
     }
 };
 
+async function listComment(req, res, next) {
+    try {
+        const post_id = req.params.post_id;
+
+        if(post_id == null) {
+            return res.status(400).json({ message: 'post_id 값이 null입니다.' });
+        }
+
+        let post = await Post.findById(post_id);
+
+        if(!post || post.length == 0) {
+            return res.status(404).json({ message: '해당 게시물을 찾을 수 없습니다.' });
+        }
+
+        const comments = post.comments;
+        
+        if (!comments || comments.length == 0) {
+            return res.status(404).json({ message: '게시물에 등록된 댓글이 없거나 댓글을 찾을 수 없습니다.' });
+        }
+
+        res.status(200).json({ comments });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
 async function updateComment(req, res, next) {
     try {
         const comment_id = req.body._id;
@@ -146,9 +173,7 @@ async function reportComment(req, res, next) {
 
 module.exports = {
     addComment,
-    /*
-    getComment,
-    */
+    listComment,
     updateComment,
     deleteComment,
     reportComment
