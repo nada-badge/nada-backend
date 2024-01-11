@@ -50,10 +50,6 @@ async function listComment(req, res, next) {
         }
 
         const comments = post.comments;
-        
-        if (!comments || comments.length == 0) {
-            return res.status(404).json({ message: '게시물에 등록된 댓글이 없거나 댓글을 찾을 수 없습니다.' });
-        }
 
         res.status(200).json({ comments });
     }
