@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@google-cloud/storage": "^7.7.0",
+    "@img/sharp-linux-x64": "^0.33.1",
     "app-root-path": "^3.1.0",
     "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",
@@ -32,6 +33,7 @@
     "package.json": "^0.0.0",
     "passport": "^0.6.0",
     "passport-oauth2": "^1.7.0",
+    "sharp": "^0.33.1",
     "winston": "^3.11.0"
   }
 }
