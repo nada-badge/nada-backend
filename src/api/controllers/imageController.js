@@ -7,10 +7,14 @@ async function uploadImage(req, res, next) {
         if (!req.files || req.files.length === 0) {
             return res.status(400).json({ message: '파일이 존재하지 않습니다.' });
         }
-   
+        
         const results = await Promise.all(
             req.files.map(async (file) => {
-                const webpBuffer = await sharp(file.buffer).toFormat('webp').toBuffer();
+                const metadata = await sharp(file.buffer).metadata();
+                const webpBuffer = await sharp(file.buffer)
+                    .resize({ width: metadata.width > 750 ? 750 : undefined })
+                    .toFormat('webp')
+                    .toBuffer();
                 const webpFileName = `${config.STORAGE_SECTION}/${req.body.section}/${Date.now()}.webp`;
                 return uploadToStorage(webpBuffer, webpFileName);
             })
