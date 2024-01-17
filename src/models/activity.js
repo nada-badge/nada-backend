@@ -33,7 +33,10 @@ const ActivitySchema = new mongoose.Schema({
     content: {
         type: String
     },
-    imageUrl: [{
+    mainImageUrl: {
+        type: String
+    },
+    extraImageUrl: [{
         type: String
     }],
     views: {

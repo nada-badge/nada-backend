@@ -5,7 +5,7 @@ const ACTIVITY = require('../../common/const/activity');
 
 async function addActivity(req, res, next) {
     try {
-        const { activityName, groupName, field, category, region, institute, instituteURL, area, content, imageUrl, startedAt, endedAt } = req.body;
+        const { activityName, groupName, field, category, region, institute, instituteURL, area, content, mainImageUrl, extraImageUrl, startedAt, endedAt } = req.body;
 
         if(category !== "전체" && !ACTIVITY.inActivity.includes(category)) {
             return res.status(401).json({ message: '카테고리 설정이 잘못되었습니다.' });
@@ -52,7 +52,8 @@ async function addActivity(req, res, next) {
             instituteURL: instituteURL,
             area: area,
             content: content,
-            imageUrl: imageUrl,
+            mainImageUrl: mainImageUrl,
+            extraImageUrl: extraImageUrl,
             startedAt: startedAt,
             endedAt: endedAt
         });
