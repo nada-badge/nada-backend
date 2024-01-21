@@ -99,13 +99,6 @@ const GroupSchema = new mongoose.Schema({
 });
 
 const UserSchema = new mongoose.Schema({
-    /*
-    did: {
-        type: String,
-        require: true,
-        unique: true
-    },
-    */
     userType: {
         type: Number,
         required: true

@@ -16,7 +16,12 @@ module.exports = {
     
     JWT_SECRET: process.env.JWT_SECRET,
 
-    NODE_ENV: process.env.NODE_ENV
+    NODE_ENV: process.env.NODE_ENV,
+
+    CHAIN_NETWORK_URL: process.env.CHAIN_NETWORK_URL_LOCAL,
+
+    CONTRACT_ADDRESS: process.env.CONTRACT_ADDRESS,
+    CONTRACT_JSON_PATH: process.env.CONTRACT_AFTER_BUILD_PATH 
 };
 
 
