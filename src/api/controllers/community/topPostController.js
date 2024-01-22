@@ -9,11 +9,11 @@ async function topPosts(req, res, next) {
 	
 	let posts;
         if (totalPostCount <= 3) {
-            posts = await Post.find().sort({ views: -1 }).limit(3).exec();
+            posts = await Post.find().sort({ views: -1 }).select('title category imageUrl').limit(3).exec();
         } else {
             posts = await Post.find({ 'registeredAt': {$gte: threeDaysAgo} })
             .sort({ views: -1, _id: 1  })
-            .select('category title imageUrl')
+            select('title category imageUrl')            
             .limit(3);
         }
 
