@@ -13,6 +13,7 @@ async function topPosts(req, res, next) {
         } else {
             posts = await Post.find({ 'registeredAt': {$gte: threeDaysAgo} })
             .sort({ views: -1, _id: 1  })
+            .select('category title imageUrl')
             .limit(3);
         }
 
