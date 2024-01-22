@@ -4,6 +4,7 @@ const { validationResult } = require('express-validator');
 const { generateToken } = require('../../common/utils/jwt');
 const { contract, web3, transactionOptions } = require('../../loader/web3');
 const ACTIVITY = require('../../common/const/activity');
+const { getAccount } = require('../../common/utils/web3');
 
 async function signUp(req, res, next) {
      try {
@@ -40,13 +41,10 @@ async function signUp(req, res, next) {
             profile.interestField = reqUser.interestField;
         }
 
-        const accounts = await web3.eth.getAccounts();
-        const ownerAccount = accounts[0];
-
         const transactionData = await contract.methods.create(reqUser.email).encodeABI();
         
         transactionOptions.data = transactionData;
-        transactionOptions.from = ownerAccount;
+        transactionOptions.from = await getAccount();
 
         const receipt = await web3.eth.sendTransaction(transactionOptions);
 

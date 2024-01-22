@@ -18,6 +18,10 @@ module.exports = {
 
     NODE_ENV: process.env.NODE_ENV,
 
+    CHAIN_ENV: process.env.CHAIN_ENV,
+
+    MAIN_WALLET: process.env.MAIN_WALLET,
+
     CHAIN_NETWORK_URL: process.env.CHAIN_NETWORK_URL_LOCAL,
 
     CONTRACT_ADDRESS: process.env.CONTRACT_ADDRESS,
