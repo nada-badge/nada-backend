@@ -182,27 +182,46 @@ async function updateActivity(req, res, next) {
 
 async function recommendActivity(req, res, next) {
     try {
-        const { region, interestField } = req.query;
-        const matchingProfiles = await Profile.find({
-            region: { $in: region },
-            interestField: { $in: interestField },
-        });
+        const userSetting = req.body;
+        const userEmail = userSetting.email;
 
-        const userIds = matchingProfiles.map((profile) => profile._id);
+        const user = await User.findOne({ email: userEmail });
 
-        const userGroupNames = await User.find({ _id: { $in: userIds } }, 'groups.groupName');
+        if (!user) {
+            res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+        }
 
-        const recommendedActivities = await Activity.find({
-            region: { $in: region },
-            field: { $in: interestField }, 
-            groupName: { $nin: userGroupNames.map(group => group.groups.map(group => group.groupName)) } 
-        }).limit(4);
+        const { region, interestField } = user.profile;
+
+        let recommendedActivities;
+
+        if (region && interestField) {
+            recommendedActivities = await Activity.find({
+                region: { $in: region },
+                field: { $in: interestField },
+                groupName: { $nin: user.groups.map(group => group.groupName) }
+            }).limit(4);
+        } else if (region) {
+                recommendedActivities = await Activity.find({
+                region: { $in: region },
+                groupName: { $nin: user.groups.map(group => group.groupName) }
+            }).limit(4);
+        } else if (interestField) {
+            recommendedActivities = await Activity.find({
+                field: { $in: interestField },
+                groupName: { $nin: user.groups.map(group => group.groupName) }
+            }).limit(4);
+        } else {
+            res.status(400).json({ message: '지역 또는 관심 분야를 설정하세요.' });
+            return;
+        }
 
         res.status(200).json({ recommendActivity: recommendedActivities });
     } catch (err) {
         next(err);
     }
 };
+
 
 
 async function deleteActivity(req, res, next) {
