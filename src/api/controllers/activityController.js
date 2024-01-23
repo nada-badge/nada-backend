@@ -182,10 +182,9 @@ async function updateActivity(req, res, next) {
 
 async function recommendActivity(req, res, next) {
     try {
-        const userSetting = req.body;
-        const userEmail = userSetting.email;
+        const email = req.query.email;
 
-        const user = await User.findOne({ email: userEmail });
+        const user = await User.findOne({ 'email': email });
 
         if (!user) {
             res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
@@ -193,28 +192,39 @@ async function recommendActivity(req, res, next) {
 
         const { region, interestField } = user.profile;
 
-        let recommendedActivities;
+        let queryConditions = {};
 
         if (region && interestField) {
-            recommendedActivities = await Activity.find({
-                region: { $in: region },
-                field: { $in: interestField },
+            queryConditions = {
+                $or: [
+                    { region: { $in: region }, field: { $in: interestField } },
+                    { region: { $in: region }, field: { $exists: false } },
+                    { field: { $in: interestField }, region: { $exists: false } }
+                ],
                 groupName: { $nin: user.groups.map(group => group.groupName) }
-            }).limit(4);
+            };
         } else if (region) {
-                recommendedActivities = await Activity.find({
-                region: { $in: region },
+            queryConditions = {
+                $or: [
+                    { region: { $in: region } },
+                    { region: { $in: region }, field: { $exists: false } }
+                ],
                 groupName: { $nin: user.groups.map(group => group.groupName) }
-            }).limit(4);
+            };
         } else if (interestField) {
-            recommendedActivities = await Activity.find({
-                field: { $in: interestField },
+            queryConditions = {
+                $or: [
+                    { field: { $in: interestField } },
+                    { field: { $in: interestField }, region: { $exists: false } }
+                ],
                 groupName: { $nin: user.groups.map(group => group.groupName) }
-            }).limit(4);
+            };
         } else {
             res.status(400).json({ message: '지역 또는 관심 분야를 설정하세요.' });
             return;
         }
+
+        const recommendedActivities = await Activity.find(queryConditions).limit(4);
 
         res.status(200).json({ recommendActivity: recommendedActivities });
     } catch (err) {
