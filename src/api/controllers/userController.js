@@ -2,7 +2,9 @@ const bcrypt = require('bcryptjs');
 const { User, Profile, Group } = require('../../models/user');
 const { validationResult } = require('express-validator');
 const { generateToken } = require('../../common/utils/jwt');
+const { contract, web3, transactionOptions } = require('../../loader/web3');
 const ACTIVITY = require('../../common/const/activity');
+const { getAccount } = require('../../common/utils/web3');
 
 async function signUp(req, res, next) {
      try {
@@ -37,6 +39,17 @@ async function signUp(req, res, next) {
                 return res.status(401).json({ message: '관심분야는 2개까지만 설정 가능합니다.' });
             }
             profile.interestField = reqUser.interestField;
+        }
+
+        const transactionData = await contract.methods.create(reqUser.email).encodeABI();
+        
+        transactionOptions.data = transactionData;
+        transactionOptions.from = await getAccount();
+
+        const receipt = await web3.eth.sendTransaction(transactionOptions);
+
+        if (!receipt.status) {
+            return res.status(500).json({ message: '트랜잭션이 실패하였습니다.' });
         }
 
         const user = new User({ 

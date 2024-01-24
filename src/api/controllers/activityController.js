@@ -182,27 +182,65 @@ async function updateActivity(req, res, next) {
 
 async function recommendActivity(req, res, next) {
     try {
-        const { region, interestField } = req.query;
-        const matchingProfiles = await Profile.find({
-            region: { $in: region },
-            interestField: { $in: interestField },
-        });
+        const email = req.query.email;
 
-        const userIds = matchingProfiles.map((profile) => profile._id);
+        const user = await User.findOne({ 'email': email });
 
-        const userGroupNames = await User.find({ _id: { $in: userIds } }, 'groups.groupName');
+        if (!user) {
+            res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+        }
 
-        const recommendedActivities = await Activity.find({
-            region: { $in: region },
-            field: { $in: interestField }, 
-            groupName: { $nin: userGroupNames.map(group => group.groups.map(group => group.groupName)) } 
-        }).limit(4);
+        const { region, interestField } = user.profile;
+
+        let queryConditions = {};
+
+        const todayDate = new Date();
+
+        if (region.length > 0 && interestField.length > 0) {
+            console.log('region & interestfield')
+            queryConditions = {
+                $or: [
+                    { region: { $in: region }, field: { $in: interestField } },
+                    { region: { $in: region }, field: { $exists: false } },
+                    { field: { $in: interestField }, region: { $exists: false } }
+                ],
+                groupName: { $nin: user.groups.map(group => group.groupName) },
+                startedAt: { $gte: todayDate }
+            };
+        } else if (region.length > 0) {
+            console.log('region')
+            queryConditions = {
+                $and: [
+                    { region: { $in: region } },
+                    { $or: [{ interestField: { $exists: false } }, { interestField: { $in: [] } }] }
+                ],
+                groupName: { $nin: user.groups.map(group => group.groupName) },
+                startedAt: { $gte: todayDate }
+            };
+        } else if (interestField.length > 0) {
+            console.log('interestfield')
+            queryConditions = {
+                $or: [
+                    { field: { $in: interestField } },
+                    { field: { $in: interestField }, region: { $in: [] } },
+                    { region: { $exists: false } }
+                ],
+                groupName: { $nin: user.groups.map(group => group.groupName) },
+                startedAt: { $gte: todayDate }
+            };
+        } else {
+            res.status(400).json({ message: '지역 또는 관심 분야를 설정하세요.' });
+            return;
+        }
+
+        const recommendedActivities = await Activity.find(queryConditions).select('activityName mainImageUrl').limit(4);
 
         res.status(200).json({ recommendActivity: recommendedActivities });
     } catch (err) {
         next(err);
     }
 };
+
 
 
 async function deleteActivity(req, res, next) {
