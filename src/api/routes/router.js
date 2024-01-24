@@ -5,6 +5,7 @@ const communityRouter = require('./community/communityRouter')
 const calendarRouter = require('./calendarRouter');
 const imageRouter = require('./imageRouter');
 const homeRouter = require('./homeRouter');
+const mypageRouter = require('./mypageRouter');
 
 const router = express.Router();
 
@@ -14,5 +15,6 @@ router.use('/community', communityRouter);
 router.use('/calendar', calendarRouter);
 router.use('/image', imageRouter);
 router.use('/home', homeRouter);
+router.use('/mypage', mypageRouter);
 
 module.exports = router;
