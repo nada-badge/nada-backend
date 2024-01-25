@@ -1,0 +1,15 @@
+node_modules
+
+.env
+
+start.sh
+stop.sh
+
+nohup.out
+
+Dockerfile
+.dockerignore
+
+service-account-key.json
+
+logs/

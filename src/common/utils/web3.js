@@ -1,3 +1,4 @@
+/*
 const { web3 } = require('../../loader/web3');
 const config = require('../../config/config');
 
@@ -19,3 +20,5 @@ module.exports = {
     getAccount,
     setTrasactionOptions
 }
+
+*/
