@@ -188,46 +188,46 @@ async function recommendActivity(req, res, next) {
 
         if (!user) {
             res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+            return;
         }
 
         const { region, interestField } = user.profile;
 
-        let queryConditions = {};
-
         const todayDate = new Date();
 
+        let queryConditions = {
+            groupName: { $nin: user.groups.map(group => group.groupName) },
+            startedAt: { $gte: todayDate }
+        };
+
         if (region.length > 0 && interestField.length > 0) {
-            console.log('region & interestfield')
-            queryConditions = {
-                $or: [
-                    { region: { $in: region }, field: { $in: interestField } },
-                    { region: { $in: region }, field: { $exists: false } },
-                    { field: { $in: interestField }, region: { $exists: false } }
-                ],
-                groupName: { $nin: user.groups.map(group => group.groupName) },
-                startedAt: { $gte: todayDate }
-            };
+            console.log('region & interestfield');
+            if (region.includes('전국') && interestField.includes('전체')) {
+                queryConditions = {};
+            } else {
+                queryConditions = {
+                    $or: [
+                        { region: { $in: region }, field: { $in: interestField } },
+                        { region: { $in: region }, field: { $exists: false } },
+                        { field: { $in: interestField }, region: { $exists: false } },
+                        { region: { $nin: region }, field: { $in: interestField } },
+                    ]
+                };
+            }
         } else if (region.length > 0) {
-            console.log('region')
-            queryConditions = {
-                $and: [
-                    { region: { $in: region } },
-                    { $or: [{ interestField: { $exists: false } }, { interestField: { $in: [] } }] }
-                ],
-                groupName: { $nin: user.groups.map(group => group.groupName) },
-                startedAt: { $gte: todayDate }
-            };
+            console.log('only region');
+            if (region.includes('전국')) {
+                queryConditions = {};
+            } else {
+                queryConditions.region = { $in: region };
+            }
         } else if (interestField.length > 0) {
-            console.log('interestfield')
-            queryConditions = {
-                $or: [
-                    { field: { $in: interestField } },
-                    { field: { $in: interestField }, region: { $in: [] } },
-                    { region: { $exists: false } }
-                ],
-                groupName: { $nin: user.groups.map(group => group.groupName) },
-                startedAt: { $gte: todayDate }
-            };
+            console.log('only interestfield');
+            if (interestField.includes('전체')) {
+                queryConditions = {};
+            } else {
+                queryConditions.field = { $in: interestField };
+            }
         } else {
             res.status(400).json({ message: '지역 또는 관심 분야를 설정하세요.' });
             return;
@@ -240,8 +240,6 @@ async function recommendActivity(req, res, next) {
         next(err);
     }
 };
-
-
 
 async function deleteActivity(req, res, next) {
     try {
