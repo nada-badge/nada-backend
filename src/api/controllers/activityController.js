@@ -201,34 +201,31 @@ async function recommendActivity(req, res, next) {
         };
 
         if (region.length > 0 && interestField.length > 0) {
-            if (region.includes('전국') && interestField.includes('전체')) {
-                queryConditions = {};
-            } else if (region.includes('전국')) {
-                queryConditions.field = { $in: interestField };
-            } else if (interestField.includes('전체')) {
-                queryConditions.region = { $in: region };
-            } else {
                 queryConditions = {
                     $or: [
                         { region: { $in: region }, field: { $in: interestField } },
                         { region: { $in: region }, field: { $exists: false } },
                         { field: { $in: interestField }, region: { $exists: false } },
                         { region: { $nin: region }, field: { $in: interestField } },
+                        { region: { $in: region }, field: '전체' },
+                        { region: '전국', field: { $in: interestField } }, 
+                        { region: '전국', field: '전체' }
                     ]
                 };
-            }
         } else if (region.length > 0) {
-            if (region.includes('전국')) {
-                queryConditions = {};
-            } else {
-                queryConditions.region = { $in: region };
-            }
+            queryConditions = { 
+                $or: [
+                    { region: { $in: region } },
+                    { region: { $in: region }, field: '전체' },
+                ]
+            };
         } else if (interestField.length > 0) {
-            if (interestField.includes('전체')) {
-                queryConditions = {};
-            } else {
-                queryConditions.field = { $in: interestField };
-            }
+            queryConditions = { 
+                $or: [
+                    { field: { $in: interestField } },
+                    { region: '전국', field: { $in: interestField } },
+                ]
+            };
         } else {
             res.status(400).json({ message: '지역 또는 관심 분야를 설정하세요.' });
             return;
