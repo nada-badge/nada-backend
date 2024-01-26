@@ -204,6 +204,10 @@ async function recommendActivity(req, res, next) {
             console.log('region & interestfield');
             if (region.includes('전국') && interestField.includes('전체')) {
                 queryConditions = {};
+            } else if (region.includes('전국')) {
+                queryConditions.field = { $in: interestField };
+            } else if (interestField.includes('전체')) {
+                queryConditions.region = { $in: region };
             } else {
                 queryConditions = {
                     $or: [
@@ -233,7 +237,12 @@ async function recommendActivity(req, res, next) {
             return;
         }
 
-        const recommendedActivities = await Activity.find(queryConditions).select('activityName mainImageUrl').limit(4);
+        let sortOption = { endedAt: 1 };
+
+        const recommendedActivities = await Activity.find(queryConditions)
+            .select('activityName mainImageUrl')
+            .sort(sortOption)
+            .limit(5);
 
         res.status(200).json({ recommendActivity: recommendedActivities });
     } catch (err) {
