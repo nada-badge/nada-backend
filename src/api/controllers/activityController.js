@@ -201,7 +201,6 @@ async function recommendActivity(req, res, next) {
         };
 
         if (region.length > 0 && interestField.length > 0) {
-            console.log('region & interestfield');
             if (region.includes('전국') && interestField.includes('전체')) {
                 queryConditions = {};
             } else if (region.includes('전국')) {
@@ -219,14 +218,12 @@ async function recommendActivity(req, res, next) {
                 };
             }
         } else if (region.length > 0) {
-            console.log('only region');
             if (region.includes('전국')) {
                 queryConditions = {};
             } else {
                 queryConditions.region = { $in: region };
             }
         } else if (interestField.length > 0) {
-            console.log('only interestfield');
             if (interestField.includes('전체')) {
                 queryConditions = {};
             } else {
@@ -240,7 +237,7 @@ async function recommendActivity(req, res, next) {
         let sortOption = { endedAt: 1 };
 
         const recommendedActivities = await Activity.find(queryConditions)
-            .select('activityName mainImageUrl')
+            .select('activityName mainImageUrl endedAt')
             .sort(sortOption)
             .limit(5);
 
