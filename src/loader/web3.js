@@ -10,6 +10,7 @@ const contract = getContract();
 let transactionOptions = {
     to: config.CONTRACT_ADDRESS,    // 스마트 컨트랙트 주소
     gas: '3000000',                 // 가스 설정
+    gasPrice: web3.utils.toWei('5', 'gwei'),
 //  from: ownerAccount,             // 발송 계정
 };
 
