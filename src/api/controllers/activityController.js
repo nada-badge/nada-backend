@@ -268,6 +268,35 @@ async function deleteActivity(req, res, next) {
     }
 };
 
+async function reportActivity(req, res, next) {
+    try {
+        const activity_id = req.body._id;
+
+        if (!activity_id) {
+            return res.status(400).json({ message: '_id(activity) 값이 null입니다.' });
+        }
+        /*
+        const activity = await Activity.findByIdAndUpdate(
+            { _id: activity_id },
+            { $inc: { reports: 1 } }
+        );
+        */
+        
+        const activity = await Activity.findById(activity_id);
+        if (!activity || activity.length == 0) {
+            return res.status(404).json({ message: '해당 활동을 찾을 수 없습니다.'})
+        }
+        activity.reports += 1;
+        
+        await activity.save(); 
+
+        res.status(200).json({ activity });
+    }
+    catch (err) {
+        next(err);
+    }
+}
+
 module.exports = {
     addActivity,
     getActivity,
@@ -275,5 +304,6 @@ module.exports = {
     recommendActivity,
     searchActivity,
     updateActivity,
-    deleteActivity
+    deleteActivity,
+    reportActivity
 };

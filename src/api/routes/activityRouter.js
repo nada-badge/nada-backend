@@ -10,5 +10,6 @@ router.get('/search', activityController.searchActivity);
 router.patch('', activityController.updateActivity);
 router.get('/recommend', activityController.recommendActivity);
 router.delete('', activityController.deleteActivity);
+router.post('/report', activityController.reportActivity);
 
 module.exports = router;
