@@ -5,7 +5,8 @@ const ACTIVITY = require('../../common/const/activity');
 
 async function addActivity(req, res, next) {
     try {
-        const { activityName, groupName, field, category, region, institute, instituteURL, area, content, mainImageUrl, extraImageUrl, startedAt, endedAt } = req.body;
+        const { activityName, email, field, category, region, institute, instituteURL, area, content, mainImageUrl, extraImageUrl, startedAt, endedAt } = req.body;
+        let { groupName } = req.body;
 
         if(category !== "전체" && !ACTIVITY.inActivity.includes(category)) {
             return res.status(401).json({ message: '카테고리 설정이 잘못되었습니다.' });
@@ -29,6 +30,14 @@ async function addActivity(req, res, next) {
         const current = new Date();
         if(current.getTime() > end.getTime()) {
             return res.status(400).json({ message: '이미 종료된 활동입니다.' });
+        }
+
+        if(!groupName) {
+            if(!email) {
+                return res.status(401).json({ message: 'groupName, email 중 하나는 입력되어야 합니다.' });
+            }
+            const groupUser = await User.findOne({ email: email, userType: 2 });
+            groupName = groupUser.groups[0].groupName;
         }
 
         const check = await Activity.findOne({ 
@@ -105,13 +114,15 @@ async function listActivity(req, res, next) {
         if (region[0] !== "전국") { query.region = { $in: region }; }
         if (category[0] !== "전체") { query.category = { $in: category }; }
 
-        searched = await Activity.find(query);
+        const projection = { activityName: 1, mainImageUrl: 1, endedAt: 1 };
+
+        searched = await Activity.find(query, projection);
        
         if(!searched || searched.length == 0) {
             return res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
         }
         
-        const activities = setFunc(searched, ['registeredAt', 'updatedAt', 'startedAt', 'endedAt'], toKST);
+        const activities = setFunc(searched, ['endedAt'], toKST);
         
         res.status(200).json({ activities });
     }
