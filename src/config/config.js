@@ -21,8 +21,9 @@ module.exports = {
     CHAIN_ENV: process.env.CHAIN_ENV,
 
     MAIN_WALLET: process.env.MAIN_WALLET,
+    PRIVATE_KEY: process.env.PRIVATE_KEY,
 
-    CHAIN_NETWORK_URL: process.env.CHAIN_NETWORK_URL_LOCAL,
+    CHAIN_NETWORK_URL: process.env.CHAIN_NETWORK_URL_PUBLIC,
 
     CONTRACT_ADDRESS: process.env.CONTRACT_ADDRESS,
     CONTRACT_JSON_PATH: process.env.CONTRACT_AFTER_BUILD_PATH 
