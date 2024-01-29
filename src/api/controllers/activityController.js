@@ -105,13 +105,15 @@ async function listActivity(req, res, next) {
         if (region[0] !== "전국") { query.region = { $in: region }; }
         if (category[0] !== "전체") { query.category = { $in: category }; }
 
-        searched = await Activity.find(query);
+        const projection = { activityName: 1, mainImageUrl: 1, endedAt: 1 };
+
+        searched = await Activity.find(query, projection);
        
         if(!searched || searched.length == 0) {
             return res.status(404).json({ massege: '해당 일정을 찾을 수 없습니다.' })
         }
         
-        const activities = setFunc(searched, ['registeredAt', 'updatedAt', 'startedAt', 'endedAt'], toKST);
+        const activities = setFunc(searched, ['endedAt'], toKST);
         
         res.status(200).json({ activities });
     }
