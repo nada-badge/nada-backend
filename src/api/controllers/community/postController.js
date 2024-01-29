@@ -100,14 +100,16 @@ async function listPost(req, res, next) {
             if (category[0] !== "전체") { query.category = { $in: category }; }
         }
         
-        searched = await Post.find(query);
+        const projection = { comments: 0, reports: 0, views: 0, updatedAt: 0 };
+
+        searched = await Post.find(query, projection);
 
         if(!searched || searched.length == 0){ 
             return res.status(404).json({ massege: '해당 게시물을 찾을 수 없습니다.' })
         }
 
         // 아래 코드 작동 안 되고 있음
-        const posts = setFunc(searched, ['registeredAt', 'updatedAt'], toKST);
+        const posts = setFunc(searched, ['registeredAt'], toKST);
         
         res.status(200).json({ posts });
     }
