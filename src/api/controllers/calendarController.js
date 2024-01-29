@@ -78,8 +78,10 @@ async function listBookmark(req, res, next) {
             return res.status(404).json({ message: '사용자의 캘린더를 찾을 수 없습니다.' });
         }
 
+        const projection = { activityName: 1, startedAt: 1, endedAt: 1 };
+
         let activitiesPromises = calendar.activities.map(async activityId => {
-            const activity = await Activity.findById(activityId);
+            const activity = await Activity.findById(activityId, projection);
             return activity;
         });
         
