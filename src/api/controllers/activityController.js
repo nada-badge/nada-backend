@@ -114,7 +114,7 @@ async function listActivity(req, res, next) {
         if (region[0] !== "전국") { query.region = { $in: region }; }
         if (category[0] !== "전체") { query.category = { $in: category }; }
 
-        const projection = { activityName: 1, mainImageUrl: 1, endedAt: 1 };
+        const projection = { activityName: 1, mainImageUrl: 1, endedAt: 1, reports: 1 };
 
         searched = await Activity.find(query, projection);
        
