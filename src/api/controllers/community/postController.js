@@ -100,7 +100,7 @@ async function listPost(req, res, next) {
             if (category[0] !== "전체") { query.category = { $in: category }; }
         }
         
-        const projection = { comments: 0, reports: 0, views: 0, updatedAt: 0 };
+        const projection = { comments: 0, views: 0, updatedAt: 0 };
 
         searched = await Post.find(query, projection);
 
