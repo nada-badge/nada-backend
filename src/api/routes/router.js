@@ -6,6 +6,7 @@ const calendarRouter = require('./calendarRouter');
 const imageRouter = require('./imageRouter');
 const homeRouter = require('./homeRouter');
 const mypageRouter = require('./mypageRouter');
+const badgeRouter = require('./badgeRouter');
 
 const router = express.Router();
 
@@ -16,5 +17,6 @@ router.use('/calendar', calendarRouter);
 router.use('/image', imageRouter);
 router.use('/home', homeRouter);
 router.use('/mypage', mypageRouter);
+router.use('/badge', badgeRouter);
 
 module.exports = router;
