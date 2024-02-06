@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const { Badge } = require('./badge');
 
 const ProfileSchema = new mongoose.Schema({
     userName: {     // 닉네임
@@ -44,14 +45,26 @@ const MemberSchema = new mongoose.Schema({
     email: {
         type: String
     },
+    team: {
+        type: String
+    },
     role: {
         type: String,
         required: true
+    },
+    phoneNumber: {
+        type: String
+    },
+    birthday: {
+        type: Date
     },
     status: {
         type: Number,
         required: true
     },
+    badges: [{
+        type: mongoose.Schema.ObjectId, ref: 'group',
+    }],
     startedAt: {
         type: Date,
         required: true
@@ -82,7 +95,7 @@ const GroupSchema = new mongoose.Schema({
     role: {
         type: String
     },
-    members: {
+    memberInfo: {
         type: MemberSchema
     },
     startedAt: {
@@ -117,7 +130,7 @@ const UserSchema = new mongoose.Schema({
         required: true
     },
     groups: [{
-        type: GroupSchema
+        type: mongoose.Schema.ObjectId, ref: 'group',
     }],
     createdAt: {
         type: Date,
@@ -135,19 +148,7 @@ const UserSchema = new mongoose.Schema({
     /*
     auth: {
         // 임베디드
-    },
-    badges: [{
-        // 임베디드
-    }],
-    calendar: {
-        // type: mongoose.Schema.ObjectId, ref: 'Calendar',
-    },  
-    groups: [{
-        // type: mongoose.Schema.ObjectId, ref: 'Group',
-    }],
-    group_info: {
-        // 임베디드
-    },
+    }
     */
 });
 
@@ -159,5 +160,6 @@ const Member = mongoose.model('Member', MemberSchema);
 module.exports = {
     User,
     Profile,
-    Group
+    Group,
+    Member
 };

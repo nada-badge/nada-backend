@@ -61,7 +61,10 @@ async function signUp(req, res, next) {
                 category: reqUser.category,
                 represent: reqUser.represent
             });
-            user.groups = group;
+
+            await group.save();
+
+            user.groups = group._id;
         }
         else if(reqUser.userType == 1) {
             user.profile.userName = reqUser.userName;
