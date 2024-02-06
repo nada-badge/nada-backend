@@ -91,7 +91,7 @@ async function addNotice(req, res, next) {
     }
 };
 
-async function listNotice(req, res, next) {
+async function getNotice(req, res, next) {
     try {
         const id = req.query._id;
 
@@ -111,6 +111,21 @@ async function listNotice(req, res, next) {
         const notice = setFunc(searched, ['registeredAt', 'updatedAt'], toKST);
         
         res.status(200).json({ notice });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
+async function listNotice(req, res, next) {
+    try {
+        const notices = await Notice.find({});
+
+        if (!notices || notices.length == 0) {
+            return res.status(404).json({ message: '공지사항이 존재하지 않습니다.' });
+        }
+
+        res.status(200).json({ notices });
     }
     catch (err) {
         next(err);
@@ -138,7 +153,14 @@ async function updateNotice(req, res, next) {
 
         await notice.save();
 
-        res.status(200).json({ notice });
+        const updatedNotice = {
+            _id: notice._id,
+            title: notice.title,
+            content: notice.content,
+            updatedAt: notice.updatedAt
+        };
+
+        res.status(200).json({ notice: updatedNotice });
 
     } 
     catch (err) {
@@ -175,6 +197,7 @@ module.exports = {
     deleteUser,
     addField,
     addNotice,
+    getNotice,
     listNotice,
     updateNotice,
     deleteNotice

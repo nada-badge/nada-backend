@@ -5,7 +5,8 @@ const router = express.Router();
 
 router.post('', mypageController.addField);
 router.post('/notice', mypageController.addNotice);
-router.get('/notice', mypageController.listNotice);
+router.get('/notice', mypageController.getNotice);
+router.get('/notice/list', mypageController.listNotice);
 router.patch('/notice', mypageController.updateNotice);
 router.delete('/notice', mypageController.deleteNotice)
 
