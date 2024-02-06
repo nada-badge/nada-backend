@@ -2,10 +2,9 @@ const bcrypt = require('bcryptjs');
 const { User, Profile, Group } = require('../../models/user');
 const { validationResult } = require('express-validator');
 const { generateToken } = require('../../common/utils/jwt');
-const { contract, web3, transactionOptions } = require('../../loader/web3');
+const { contract } = require('../../loader/web3');
+const { call } = require('../../services/chain');
 const ACTIVITY = require('../../common/const/activity');
-const { getAccount } = require('../../common/utils/web3');
-const config = require('../../config/config');
 
 async function signUp(req, res, next) {
      try {
@@ -43,12 +42,7 @@ async function signUp(req, res, next) {
         }
 
         const transactionData = await contract.methods.create(reqUser.email).encodeABI();
-       
-        transactionOptions.data = transactionData;
-        transactionOptions.from = await getAccount();
-     
-        const signedTransaction = await web3.eth.accounts.signTransaction(transactionOptions, config.PRIVATE_KEY);
-        const receipt = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+        const receipt = await call(transactionData);
 
         if (!receipt.status) {
             return res.status(500).json({ message: '트랜잭션이 실패하였습니다.' });

@@ -1,21 +1,19 @@
-const crypto = require('crypto');
 const { Badge } = require('../../models/badge');
-const { contract, web3, transactionOptions } = require('../../loader/web3');
-const { getAccount } = require('../../common/utils/web3');
-const config = require('../../config/config');
+const { contract } = require('../../loader/web3');
+const { generateBadgeId, call } = require('../../services/chain');
 
 async function issueBadge(req, res, next) {
     try {
         // 하나만 발급한다고 생각하고 구현해보자!
         const reqInfo = req.body;
 
-        /*
+    /*
         const isExist = await User.findOne({ 'userType': 2, 'email': reqInfo.issuer });
 
         if(isExist == null) {
             return res.status(401).json({ message: '발급자 확인이 불가능합니다.' });
         }
-*/
+    */
         const badgeInfo = {
             id: "",
             owner: reqInfo.ownerEmail,
@@ -24,19 +22,10 @@ async function issueBadge(req, res, next) {
             issuer: reqInfo.issuer
         };
 
-        const badgeInfoString = JSON.stringify(badgeInfo);
-        const badgeId = crypto.createHash('sha256').update(badgeInfoString).digest('hex');
+        const badgeId = generateBadgeId(badgeInfo);
 
-        console.log('Generated BadgeID:', badgeId);
-        console.log(contract.methods)
-          
         const transactionData = await contract.methods.claim(badgeInfo, badgeId).encodeABI();
-
-        transactionOptions.data = transactionData;
-        transactionOptions.from = await getAccount();
-
-        const signedTransaction = await web3.eth.accounts.signTransaction(transactionOptions, config.PRIVATE_KEY);
-        const receipt = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+        const receipt = await call(transactionData);
 
         if (!receipt.status) {
             return res.status(500).json({ message: '트랜잭션이 실패하였습니다.' });
