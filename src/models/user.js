@@ -60,6 +60,7 @@ const MemberSchema = new mongoose.Schema({
     },
     status: {
         type: Number,
+        default: 1,
         required: true
     },
     badges: [{
@@ -89,15 +90,15 @@ const GroupSchema = new mongoose.Schema({
         required: true
     },
     category: {
-        type: Number,
+        type: String,
         required: true
     },
     role: {
         type: String
     },
-    memberInfo: {
+    memberInfo: [{
         type: MemberSchema
-    },
+    }],
     startedAt: {
         type: Date
     },
