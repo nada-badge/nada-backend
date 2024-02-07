@@ -267,6 +267,23 @@ async function reportPost(req, res, next) {
     }
 };
 
+async function myPost(req, res, next) {
+    try {
+        const userEmail = req.query.email;
+
+        const posts = await Post.find({ userEmail });
+
+        if (!posts || posts.length == 0) {
+            return res.status(404).json({ message: '내가 작성한 글이 존재하지 않습니다.' });
+        }
+
+        res.status(200).json({ posts });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     addPost,
     getPost,
@@ -274,5 +291,6 @@ module.exports = {
     updatePost,
     deletePost,
     searchPost,
-    reportPost
+    reportPost,
+    myPost
 };
