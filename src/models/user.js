@@ -66,6 +66,10 @@ const MemberSchema = new mongoose.Schema({
     badges: [{
         type: mongoose.Schema.ObjectId, ref: 'Badge',
     }],
+    isUser: {
+        type: Boolean,
+        default: false
+    },
     startedAt: {
         type: Date,
     //    required: true
