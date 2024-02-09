@@ -60,14 +60,19 @@ const MemberSchema = new mongoose.Schema({
     },
     status: {
         type: Number,
+        default: 1,
         required: true
     },
     badges: [{
-        type: mongoose.Schema.ObjectId, ref: 'group',
+        type: mongoose.Schema.ObjectId, ref: 'Badge',
     }],
+    isUser: {
+        type: Boolean,
+        default: false
+    },
     startedAt: {
         type: Date,
-        required: true
+    //    required: true
     },
     endedAt: {
         type: Date
@@ -89,15 +94,15 @@ const GroupSchema = new mongoose.Schema({
         required: true
     },
     category: {
-        type: Number,
+        type: String,
         required: true
     },
     role: {
         type: String
     },
-    memberInfo: {
+    memberInfo: [{
         type: MemberSchema
-    },
+    }],
     startedAt: {
         type: Date
     },
@@ -130,7 +135,7 @@ const UserSchema = new mongoose.Schema({
         required: true
     },
     groups: [{
-        type: mongoose.Schema.ObjectId, ref: 'group',
+        type: mongoose.Schema.ObjectId, ref: 'Group',
     }],
     createdAt: {
         type: Date,
@@ -144,7 +149,10 @@ const UserSchema = new mongoose.Schema({
     },
     calendar: {
         type: mongoose.Schema.ObjectId, ref: 'Calendar',
-    },  
+    },
+    badges: [{
+        type: mongoose.Schema.ObjectId, ref: 'Badge',
+    }],
     /*
     auth: {
         // 임베디드

@@ -1,14 +1,17 @@
 const mongoose = require('mongoose')
 
 const BadgeSchema = new mongoose.Schema({
+    badgeIdAtChain: {
+        type: String,
+        require: true
+    },
     onwerEmail: {
         type: String,
         required: true
     },
     badgeName: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     category: { 
         type: String, 
@@ -30,7 +33,7 @@ const BadgeSchema = new mongoose.Schema({
         required: true
     },
     records: [{
-        name: {
+        recordName: {
             type: String
         },
         startMonth: {
@@ -68,6 +71,7 @@ const BadgeSchema = new mongoose.Schema({
     },
     issuedAt: {
         type: Date,
+        default: Date.now
     },
     updatedAt: {
         type: Date,
