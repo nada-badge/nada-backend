@@ -4,7 +4,8 @@ const config = require('../config/config');
 
 async function getAccount() {
     if (config.CHAIN_ENV === 'ganache') {
-        return (await web3.eth.getAccounts())[0];
+        const accounts = await web3.eth.getAccounts();
+        return accounts[0];
     } else if (config.CHAIN_ENV === 'mumbai') {
         return config.MAIN_WALLET;
     } else {
@@ -18,8 +19,10 @@ function generateBadgeId(badgeInfo) {
 }
 
 async function call(transactionData) {
+    const senderAddress = await getAccount();
+
     transactionOptions.data = transactionData;
-    transactionOptions.from = await getAccount();
+    transactionOptions.from = senderAddress;
 
     const signedTransaction = await web3.eth.accounts.signTransaction(transactionOptions, config.PRIVATE_KEY);
     const receipt = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
