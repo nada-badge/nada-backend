@@ -1,6 +1,6 @@
 const { Badge } = require('../../models/badge');
 const { Group, User } = require('../../models/user');
-const { contract } = require('../../loader/web3');
+const { contract, web3 } = require('../../loader/web3');
 const { generateBadgeId, call } = require('../../services/chain');
 
 async function issueBadge(req, res, next) {
@@ -124,8 +124,43 @@ async function listBadge(req, res, next) {
     }
 }
 
+async function getBadge(req, res, next) {
+    try {
+        const badgeId = req.query._id;
+        const { email } = req.query;
+
+        const isExist = await User.findOne({ 'email': email });
+
+        if(!isExist) {
+            return res.status(401).json({ message: '발급자 확인이 불가능합니다.' });
+        }
+
+        const badge = await Badge.findById(badgeId);
+
+        if(!badge) {
+            return res.status(404).json({ message: '뱃지가 존재하지 않습니다.' })
+        }
+/*
+        const transactionData = await contract.methods.get(badge.badgeIdAtChain).encodeABI();
+ 
+        const receipt = await web3.eth.call(transactionData);
+
+        if (!receipt.status) {
+            return res.status(500).json({ message: '트랜잭션이 실패하였습니다.' });
+        }
+
+        console.log(receipt);
+    */
+        res.status(200).json({ badge });
+
+    }
+    catch (err) {
+        next(err);
+    }
+}
 
 module.exports = {
     issueBadge,
-    listBadge
+    listBadge,
+    getBadge
 };
