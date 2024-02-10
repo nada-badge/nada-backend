@@ -107,11 +107,19 @@ async function listBadge(req, res, next) {
 
         if(!user) {
             return res.status(401).json({ message: '사용자 확인이 불가능합니다.' });
-        } 
+        }
 
-        const badgeIds = user.badges;
+        let query = {};
 
-        const badges = await Badge.find({ _id: { $in: badgeIds } });
+        if(user.userType === 1) {
+            const badgeIds = user.badges;
+            query._id = { $in: badgeIds };
+        }
+        else if(user.userType === 2) {
+            query.issuer = email;
+        }
+
+        const badges = await Badge.find(query);
 
         if(!badges || badges.length === 0) {
             return res.status(404).json({ message: '조회된 뱃지가 없습니다.' });
