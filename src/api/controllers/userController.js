@@ -153,10 +153,30 @@ async function checkGroupUser(req, res, next) {
     }
 }
 
+async function getUser(req, res, next) {
+    try {
+        const { _id } = req.query;
+
+        const projection = { password: 0 };
+
+        const user = await User.findById(_id, projection);
+        
+        if (!user) {
+            return res.status(401).json({ message: '사용자 확인이 불가능합니다.' });
+        }
+
+        res.status(200).json({ user });
+
+    } catch (err) {
+        next(err);
+    }
+}
+
 module.exports = {
     signUp,
     login,
     checkUserName,
     checkEmailOverlap,
-    checkGroupUser
+    checkGroupUser,
+    getUser
 }

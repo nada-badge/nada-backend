@@ -17,4 +17,7 @@ router.get('/userName', userController.checkUserName);
 router.get('/email', userController.checkEmailOverlap);
 router.post('/groupUser', userController.checkGroupUser)
 
+// 사용자 조회
+router.get('', userController.getUser);
+
 module.exports = router;
