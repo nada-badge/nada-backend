@@ -1,7 +1,6 @@
-const bcrypt = require('bcryptjs');
 const { User, Profile, Group } = require('../../models/user');
 const { validationResult } = require('express-validator');
-const { generateToken } = require('../../common/utils/jwt');
+const { generateToken, generateHashedPassword } = require('../../common/utils/auth');
 const { contract } = require('../../loader/web3');
 const { call } = require('../../services/chain');
 const ACTIVITY = require('../../common/const/activity');
@@ -14,9 +13,8 @@ async function signUp(req, res, next) {
         if(!err.isEmpty()){
             return res.send('error');
         }
-        
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(reqUser.password, salt);
+    
+        const hashedPassword = await generateHashedPassword(reqUser.password);
    
         const profile = new Profile({
             phoneNumber: reqUser.phoneNumber
