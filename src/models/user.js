@@ -32,12 +32,7 @@ const ProfileSchema = new mongoose.Schema({
     }],
     interestField  : [{
         type: String
-    }],
-    updatedAt: {
-        type: Date,
-        required: true,
-        default: Date.now
-    }
+    }]
 })
 
 const MemberSchema = new mongoose.Schema({
