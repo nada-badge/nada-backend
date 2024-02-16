@@ -1,7 +1,8 @@
 const { User } = require('../../models/user');
 const { Notice } = require('../../models/notice');
-const { toKST, setFunc } = require('../../common/utils/converter');0
+const { toKST, setFunc } = require('../../common/utils/converter');
 const ACTIVITY = require('../../common/const/activity');
+const { generateHashedPassword } = require('../../common/utils/auth');
 
 async function deleteUser(req, res, next) {
     try {
@@ -193,6 +194,60 @@ async function deleteNotice(req, res, next) {
     }
 };
 
+async function updateProfile (req, res, next) {
+    try {
+        const { userName, phoneNumber, profileImageUrl, password, groupName, represent, category } = req.body;
+        const { user_id } = req.params;
+
+        if(!user_id) {
+            return res.status(400).json({ message: '_id(user) 값이 null입니다.' });
+        }
+
+        let user = await User.findById(user_id);
+
+        if(!user || user.length == 0) {
+            return res.status(404).json({message: '해당 사용자를 찾을 수 없습니다.'});
+        }
+
+        if(user.userType === 1) {
+            if(userName) {
+                user.profile.userName = userName;
+            }
+        }
+        else if(user.userType === 2) {
+            if(groupName) {
+                user.groups[0].groupName = groupName;
+            }
+            if(represent) {
+                user.groups[0].represent = represent;
+            }
+            if(category) {
+                user.groups[0].category = category;
+            }
+        }
+        if(phoneNumber) {
+            user.profile.phoneNumber = phoneNumber;
+        }
+        if(profileImageUrl) {
+            user.profile.profileImageUrl = profileImageUrl;
+        }
+        if(password) {
+            const hashedPassword = await generateHashedPassword(password);
+            user.password = hashedPassword;
+        }
+
+        user.updatedAt = new Date();
+
+        await user.save();
+
+        res.status(200).json({ user });
+
+    } 
+    catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     deleteUser,
     addField,
@@ -200,5 +255,6 @@ module.exports = {
     getNotice,
     listNotice,
     updateNotice,
-    deleteNotice
+    deleteNotice,
+    updateProfile
 };
