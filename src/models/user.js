@@ -9,6 +9,9 @@ const ProfileSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    profileImageUrl : {
+        type: String
+    },
     introduce : {
         type: String
     },
