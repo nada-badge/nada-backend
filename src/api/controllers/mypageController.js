@@ -240,7 +240,7 @@ async function updateProfile (req, res, next) {
 
         await user.save();
 
-        res.status(200).json({ user });
+        res.status(200).json({ massage: '사용자 정보가 정상적으로 변경되었습니다.' });
 
     } 
     catch (err) {
