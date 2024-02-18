@@ -1,4 +1,4 @@
-const { Post, Comment } = require('../../../models/community');
+const { Post, Comment, Reply } = require('../../../models/community');
 const { User } = require('../../../models/user');
 
 async function addComment(req, res, next) {
@@ -167,10 +167,34 @@ async function reportComment(req, res, next) {
     }
 };
 
+async function myComment(req, res, next) {
+    try {
+        const userEmail = req.query.email;
+
+        const posts = await Post.find();
+
+        let userComments = [];
+
+        for (const post of posts) {
+            const comments = post.comments;
+            
+            const filteredComments = comments.filter(comment => comment.userEmail === userEmail);
+            
+            userComments = userComments.concat(filteredComments);
+        }
+
+        res.status(200).json({ userComments });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     addComment,
     listComment,
     updateComment,
     deleteComment,
-    reportComment
+    reportComment,
+    myComment
 };

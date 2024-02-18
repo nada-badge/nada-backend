@@ -1,4 +1,4 @@
-const { Post, Reply } = require('../../../models/community');
+const { Post, Comment, Reply } = require('../../../models/community');
 const { User } = require('../../../models/user');
 
 async function addReply(req, res, next) {
@@ -176,6 +176,32 @@ async function reportReply(req, res, next) {
     }
 };
 
+async function myReply(req, res, next) {
+    try {
+        const userEmail = req.query.email;
+
+        const posts = await Post.find();
+        
+        let userReplies = [];
+
+        for (const post of posts) {
+            const comments = post.comments;
+            for (const comment of comments) {
+                const replies = comment.replies;
+
+                const filteredReplies = replies.filter(reply => reply.userEmail === userEmail);
+            
+                userReplies = userReplies.concat(filteredReplies);
+            }   
+        }
+
+        res.status(200).json({ userReplies });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     addReply,
     /*
@@ -183,5 +209,6 @@ module.exports = {
     */
     updateReply,
     deleteReply,
-    reportReply
+    reportReply,
+    myReply
 };
