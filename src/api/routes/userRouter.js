@@ -15,7 +15,10 @@ router.delete('', mypageController.deleteUser);
 // 중복체크
 router.get('/userName', userController.checkUserName);
 router.get('/email', userController.checkEmailOverlap);
-router.post('/groupUser', userController.checkGroupUser)
+router.post('/groupUser', userController.checkGroupUser);
+
+// 비밀번호 체크
+router.post('/password/:user_id', userController.checkPassword);
 
 // 사용자 조회
 router.get('', userController.getUser);

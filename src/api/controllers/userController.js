@@ -1,6 +1,6 @@
 const { User, Profile, Group } = require('../../models/user');
 const { validationResult } = require('express-validator');
-const { generateToken, generateHashedPassword } = require('../../common/utils/auth');
+const { generateToken, generateHashedPassword, comparePassword } = require('../../common/utils/auth');
 const { contract } = require('../../loader/web3');
 const { call } = require('../../services/chain');
 const ACTIVITY = require('../../common/const/activity');
@@ -86,7 +86,7 @@ async function login(req, res, next) {
             return res.status(401).json({ message: '사용자 확인이 불가능합니다.' });
         }
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await comparePassword(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ message: '비밀번호가 올바르지 않습니다.' });
         }
@@ -158,12 +158,33 @@ async function getUser(req, res, next) {
         const projection = { password: 0 };
 
         const user = await User.findById(_id, projection);
-        
         if (!user) {
             return res.status(401).json({ message: '사용자 확인이 불가능합니다.' });
         }
 
         res.status(200).json({ user });
+
+    } catch (err) {
+        next(err);
+    }
+}
+
+async function checkPassword(req, res, next) {
+    try {
+        const { password } = req.body;
+        const { user_id } = req.params;
+        
+        const user = await User.findById(user_id);
+        if (!user) {
+            return res.status(401).json({ message: '사용자 확인이 불가능합니다.' });
+        }
+
+        const isMatch = await comparePassword(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: '비밀번호가 일치하지 않습니다.' });
+        }
+
+        res.status(200).json({ message: '비밀번호가 일치합니다.' });
 
     } catch (err) {
         next(err);
@@ -176,5 +197,6 @@ module.exports = {
     checkUserName,
     checkEmailOverlap,
     checkGroupUser,
-    getUser
+    getUser,
+    checkPassword
 }

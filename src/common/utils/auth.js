@@ -28,8 +28,13 @@ async function generateHashedPassword(password) {
     return hashedPassword;
 }
 
+async function comparePassword(password1, password2) {
+    return await bcrypt.compare(password1, password2);
+}
+
 module.exports = { 
     generateToken,
     verifyToken,
-    generateHashedPassword
+    generateHashedPassword,
+    comparePassword
 };
