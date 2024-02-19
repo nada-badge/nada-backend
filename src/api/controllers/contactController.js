@@ -25,6 +25,22 @@ async function sendContact(req, res, next) {
     }
 };
 
+async function listContact(req, res, next) {
+    try {
+        const contacts = await Contact.find({});
+
+        if (!contacts || contacts.length === 0) {
+            return res.status(404).json({ message: '문의가 존재하지 않습니다.' });
+        }
+
+        res.status(200).json({ contacts });
+        
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
-    sendContact
+    sendContact,
+    listContact
 };
