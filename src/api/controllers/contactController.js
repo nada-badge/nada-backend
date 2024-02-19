@@ -40,7 +40,29 @@ async function listContact(req, res, next) {
     }
 };
 
+async function getContact(req, res, next) {
+    try {
+        const { contact_id } = req.params;
+
+        const contact = await Contact.findByIdAndUpdate(
+            contact_id,
+            { isRead: true },
+            { new: true }
+        );
+
+        if (!contact) {
+            return res.status(404).json({ message: '해당 문의가 존재하지 않습니다.' });
+        }
+
+        res.status(200).json({ contact });
+        
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     sendContact,
-    listContact
+    listContact,
+    getContact
 };
