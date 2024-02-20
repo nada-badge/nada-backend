@@ -284,6 +284,17 @@ async function myPost(req, res, next) {
     }
 };
 
+async function reportedPost(req, res, next) {
+    try {
+        const posts = await Post.find({ reports: { $gte: 1 } });
+
+        res.status(200).json({ posts });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     addPost,
     getPost,
@@ -292,5 +303,6 @@ module.exports = {
     deletePost,
     searchPost,
     reportPost,
-    myPost
+    myPost,
+    reportedPost
 };

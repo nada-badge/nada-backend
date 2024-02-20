@@ -202,6 +202,30 @@ async function myReply(req, res, next) {
     }
 };
 
+async function reportedReply(req, res, next) {
+    try {
+        const posts = await Post.find();
+
+        let reportedReplies = [];
+
+        for (const post of posts) {
+            const comments = post.comments;
+            for (const comment of comments) {
+                const replies = comment.replies;
+
+                const reported = replies.filter(reply => reply.reports >= 1);
+            
+                reportedReplies = reportedReplies.concat(reported);
+            }   
+        }
+
+        res.status(200).json({ reportedReplies });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     addReply,
     /*
@@ -210,5 +234,6 @@ module.exports = {
     updateReply,
     deleteReply,
     reportReply,
-    myReply
+    myReply,
+    reportedReply
 };

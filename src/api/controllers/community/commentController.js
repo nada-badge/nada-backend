@@ -190,11 +190,32 @@ async function myComment(req, res, next) {
     }
 };
 
+async function reportedComment(req, res, next) {
+    try {
+        const posts = await Post.find();
+
+        let reportedComments = [];
+
+        for (const post of posts) {
+            const comments = post.comments;
+
+            const reported = comments.filter(comment => comment.reports >= 1);
+
+            reportedComments = reportedComments.concat(reported);
+        }
+        res.status(200).json({ reportedComments });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     addComment,
     listComment,
     updateComment,
     deleteComment,
     reportComment,
-    myComment
+    myComment,
+    reportedComment
 };
