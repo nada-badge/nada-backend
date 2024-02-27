@@ -11,6 +11,7 @@ router.delete('', postController.deletePost);
 router.get('/search', postController.searchPost);
 router.post('/report', postController.reportPost);
 router.get('/mylist', postController.myPost);
+router.get('/myComment', postController.getPostContainedMyComment);
 router.get('/reportedList', postController.reportedPost);
 
 module.exports = router;

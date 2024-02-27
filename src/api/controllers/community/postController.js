@@ -284,6 +284,36 @@ async function myPost(req, res, next) {
     }
 };
 
+async function getPostContainedMyComment(req, res, next) {
+    try {
+        const userEmail = req.query.email;
+
+        const posts = await Post.find();
+
+        let contained = [];
+
+        for (const post of posts) {
+            const comments = post.comments;
+            
+            const filteredComments = comments.filter(comment => comment.userEmail === userEmail);
+            
+            if(filteredComments.length > 1) {
+                console.log(filteredComments)
+                contained = contained.concat(post);
+            }
+            
+            if(!contained) {
+                return res.status(404).json({ message: '해당 게시물을 찾을 수 없습니다.' });
+            }
+        }
+
+        res.status(200).json({ posts: contained });
+    }
+    catch (err) {
+        next(err);
+    }
+};
+
 async function reportedPost(req, res, next) {
     try {
         const posts = await Post.find({ reports: { $gte: 1 } });
@@ -304,5 +334,6 @@ module.exports = {
     searchPost,
     reportPost,
     myPost,
+    getPostContainedMyComment,
     reportedPost
 };

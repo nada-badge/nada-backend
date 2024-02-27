@@ -167,29 +167,6 @@ async function reportComment(req, res, next) {
     }
 };
 
-async function myComment(req, res, next) {
-    try {
-        const userEmail = req.query.email;
-
-        const posts = await Post.find();
-
-        let userComments = [];
-
-        for (const post of posts) {
-            const comments = post.comments;
-            
-            const filteredComments = comments.filter(comment => comment.userEmail === userEmail);
-            
-            userComments = userComments.concat(filteredComments);
-        }
-
-        res.status(200).json({ userComments });
-    }
-    catch (err) {
-        next(err);
-    }
-};
-
 async function reportedComment(req, res, next) {
     try {
         const posts = await Post.find();
@@ -216,6 +193,5 @@ module.exports = {
     updateComment,
     deleteComment,
     reportComment,
-    myComment,
     reportedComment
 };
