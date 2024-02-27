@@ -298,9 +298,19 @@ async function getPostContainedMyComment(req, res, next) {
             const filteredComments = comments.filter(comment => comment.userEmail === userEmail);
             
             if(filteredComments.length > 1) {
-                console.log(filteredComments)
                 contained = contained.concat(post);
+                continue;
             }
+
+            for (const comment of comments) {
+                const replies = comment.replies;
+
+                const filteredReplies = replies.filter(reply => reply.userEmail === userEmail);
+            
+                if(filteredReplies.length > 1) {
+                    contained = contained.concat(post);
+                }
+            }   
             
             if(!contained) {
                 return res.status(404).json({ message: '해당 게시물을 찾을 수 없습니다.' });
