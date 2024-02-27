@@ -3,7 +3,7 @@ const { User } = require('../../models/user');
 
 async function sendContact(req, res, next) {
     try {
-        const { sender, title, content } = req.body;
+        const { sender, title, content, imageUrl } = req.body;
 
         const isExist = await User.findOne({ 'email': sender });
         if(!isExist) {
@@ -13,7 +13,8 @@ async function sendContact(req, res, next) {
         const contact = new Contact({
             sender: sender,
             title: title,
-            content: content
+            content: content,
+            imageUrl: imageUrl
         });
 
         await contact.save();
