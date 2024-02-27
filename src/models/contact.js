@@ -13,6 +13,9 @@ const ContactSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    imageUrl: [{
+        type: String
+    }],
     registeredAt: {
         type: Date,
         required: true,
