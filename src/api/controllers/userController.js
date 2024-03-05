@@ -157,9 +157,26 @@ async function getUser(req, res, next) {
 
         const projection = { password: 0 };
 
-        const user = await User.findById(_id, projection);
+        let user = await User.findById(_id, projection);
         if (!user) {
             return res.status(401).json({ message: '사용자 확인이 불가능합니다.' });
+        }
+
+        if(user.userType === 2) {
+            let groupUser = {
+               _id: user._id,
+               userType: user.userType,
+               email: user.email,
+               profile: {
+                   phoneNumber: user.profile.phoneNumber,
+               },
+               createdAt: user.createdAt,
+               updatedAt: user.updatedAt
+            };
+            const group = await Group.findById(user.groups[0]);
+            groupUser.groupInfo = group;
+
+            return res.status(200).json({ "user" : groupUser });
         }
 
         res.status(200).json({ user });
