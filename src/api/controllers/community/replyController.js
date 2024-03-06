@@ -188,9 +188,25 @@ async function reportedReply(req, res, next) {
             for (const comment of comments) {
                 const replies = comment.replies;
 
-                const reported = replies.filter(reply => reply.reports >= 1);
-            
-                reportedReplies = reportedReplies.concat(reported);
+                const reportedList = replies.filter(reply => reply.reports >= 1);
+                
+                if(reportedList.length > 0) {
+                    reportedList.forEach((reported) => {
+                        let rpl = {
+                            _id: reported._id,
+                            userEmail: reported.userEmail,
+                            userName: reported.userName,
+                            content: reported.content,
+                            isEdited: reported.isEdited,
+                            reports: reported.reports,
+                            registeredAt: reported.registeredAt,
+                            updatedAt: reported.updatedAt,
+                            post_id: post._id
+                        };
+                
+                        reportedReplies = reportedReplies.concat(rpl);
+                    });
+                }
             }   
         }
 
