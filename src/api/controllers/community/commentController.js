@@ -176,9 +176,27 @@ async function reportedComment(req, res, next) {
         for (const post of posts) {
             const comments = post.comments;
 
-            const reported = comments.filter(comment => comment.reports >= 1);
+            const reportedList = comments.filter(comment => comment.reports >= 1);
 
-            reportedComments = reportedComments.concat(reported);
+            if(reportedList.length > 0) {
+                reportedList.forEach((reported) => {
+                    let cmt = {
+                        _id: reported._id,
+                        userEmail: reported.userEmail,
+                        userName: reported.userName,
+                        content: reported.content,
+                        replies: reported.replies,
+                        isEdited: reported.isEdited,
+                        isDeleted: reported.isDeleted,
+                        reports: reported.reports,
+                        registeredAt: reported.registeredAt,
+                        updatedAt: reported.updatedAt,
+                        post_id: post._id
+                    };
+            
+                    reportedComments = reportedComments.concat(cmt);
+                });
+            }
         }
         res.status(200).json({ reportedComments });
     }
