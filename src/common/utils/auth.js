@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const config = require("../../config/config"); 
 
 // JWT 토큰 생성
-function generateToken(user) {
+function generateAccessToken(user) {
     const payload = {
         sub: user._id,
         userType: user.userType,
@@ -13,7 +13,7 @@ function generateToken(user) {
 }
 
 // JWT 토큰 검증
-function verifyToken(token) {
+function verifyAccessToken(token) {
     try {
         return jwt.verify(token, config.JWT_SECRET);
     } catch (error) {
@@ -33,8 +33,8 @@ async function comparePassword(password1, password2) {
 }
 
 module.exports = { 
-    generateToken,
-    verifyToken,
+    generateAccessToken,
+    verifyAccessToken,
     generateHashedPassword,
     comparePassword
 };
