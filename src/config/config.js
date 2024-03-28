@@ -14,7 +14,8 @@ module.exports = {
 
     HOME_BANNER_PREFIX: process.env.HOME_BANNER_PREFIX,
     
-    JWT_SECRET: process.env.JWT_SECRET,
+    JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
+    JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
 
     NODE_ENV: process.env.NODE_ENV,
 
